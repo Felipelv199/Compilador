@@ -6,15 +6,15 @@ FILE *yyin;
 digitos [0-9]
 alfabeto [A-Za-z]
 
-Delim [.,;()\n\t]|"["|"]"
-PalRes "constantes"|"variables"|"real"|"alfabetico"|"logico"|"entero"|"funcion"|"inicio"|"fin"|"de"|"procedimiento"|"regresa"|"si"|"hacer"|"sino"|"cuando"|"el"|"valor"|"sea"|"otro"|"desde"|"hasta"|"incr"|"decr"|"repetir"|"que"|"mientras"|"se"|"cumpla"|"continua"|"interrumpe"|"limpia (pantalla)"|"lee"|"imprime"|"imprimenl" 
+Delim [.,:;()\n\t]|"["|"]"
+PalRes "constantes"|"variables"|"real"|"alfabetico"|"logico"|"entero"|"funcion"|"inicio"|"fin"|"de"|"procedimiento"|"regresa"|"si"|"hacer"|"sino"|"cuando"|"el"|"valor"|"sea"|"otro"|"desde"|"hasta"|"incr"|"decr"|"repetir"|"que"|"mientras"|"se"|"cumpla"|"continua"|"interrumpe"|"limpia (pantalla)"|"lee"|"imprime"|"imprimenl"|"Programa"|"Fin de programa." 
 OpArit [+-/%^]|"*"
 OpRel "="|"<>"|"<"|">"|"<="|">="
 OpLog [ )]("y"|"no"|"o")[ (]
 OpAsig ":="
 CteEnt {digitos}+
-CteReal {digitos}+((.{digitos}+)|(E{digitos}+))?
-CteAlfa ["]({alfabeto}|[!¡¿? .])*["]
+CteReal {digitos}+(.|E){digitos}*
+CteAlfa (["])({alfabeto}|{Delim}|{OpRel}|[!¡¿.]|\?|\t|\n|" ")+(["])
 CteLog "verdadero"|"falso"
 
 blank [ \n\t]*
@@ -43,9 +43,8 @@ constantes constantes{GpoConsts}
 {CteAlfa} {fprintf(yyout,"%s 						<CteAlfa>\n",yytext);}
 {CteEnt} {fprintf(yyout,"%s 						<CteEnt>\n",yytext);}
 {CteReal} {fprintf(yyout,"%s 						<CteReal>\n",yytext);}
-
 {id} {fprintf(yyout,"%s 						<Ident>\n",yytext);}
-. ;
+. {printf("%s",yytext);}
 %%
 
 int main(int argc, char *argv[])
