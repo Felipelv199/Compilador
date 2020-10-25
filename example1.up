@@ -1,0 +1,4 @@
+Imprime("Dame un numero: );
+      lee(n);
+      Imprime("Factorial R]recursivo I]interactivo S]salir: ");
+      Lee(opc);
