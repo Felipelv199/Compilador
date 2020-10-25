@@ -110,9 +110,11 @@ def t_error(t):
 file_name = "example1"
 file = open("{}.up".format(file_name), "r")
 lex_file = open("{}.lex".format(file_name), "w")
-lex_file.write("---------------------------------------------\n")
+lex_file.write(
+    "---------------------------------------------------------------------\n")
 lex_file.write("Lexema\t\t\t\t\tToken\n")
-lex_file.write("---------------------------------------------\n")
+lex_file.write(
+    "---------------------------------------------------------------------\n")
 
 error_file = open("{}.err".format(file_name), "w")
 error_file.write(
