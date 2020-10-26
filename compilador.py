@@ -64,9 +64,9 @@ def get_error_line(t):
     s = ''
     for i in range(len(t.lexer.lexdata)):
         s += t.lexer.lexdata[i]
-        if t.lexer.lexdata[i] == '\n':
+        if t.lexer.lexdata[i] == '\n' and i < t.lexer.lexpos:
             s = ''
-        elif i == t.lexer.lexpos:
+        elif i >= t.lexer.lexpos and t.lexer.lexdata[i] == ';' or t.lexer.lexdata[i] == '\n':
             break
     return s.strip()
 
