@@ -2,9 +2,6 @@ import os
 import ply.lex as lex
 from difflib import SequenceMatcher
 
-# os.system('flex compilador.l && gcc -o out lex.yy.c && out.exe examen.up')
-# os.system('flex compilador.l && gcc -o out lex.yy.c && out.exe')
-
 tokens = [
     'Delim',
     'OpArit',
