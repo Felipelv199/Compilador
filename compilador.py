@@ -16,6 +16,7 @@ tokens = [
     'CteAlfa',
     'CteAlfaError',
     'CteLog',
+    'IDError',
     'ID',
 ]
 
@@ -92,6 +93,20 @@ def t_OpAsig(t):
     return t
 
 
+def t_IDError(t):
+    r'[\d][a-zA-Z0-9_]*[ ]*((:=)|,|[(])'
+    write_lexical_error(t, '<lexico>Un identificador no comienza con <digito>')
+
+
+def t_ID(t):
+    r'[a-zA-Z_][a-zA-Z0-9_]*'
+    if t.value.lower() in PalRes:
+        lex_file.write("{:<40}<{}>\n".format(t.value, 'PalRes'))
+        return
+
+    return t
+
+
 def t_CteRealError(t):
     r'\d+([.]|E)([^\d]*)(;|\n)'
     write_lexical_error(t, '<lexico>Se esperaba <digito>')
@@ -114,14 +129,6 @@ def t_CteAlfaError(t):
 
 def t_CteAlfa(t):
     r'["]([^"]*)["]'
-    return t
-
-
-def t_ID(t):
-    r'[a-zA-Z_][a-zA-Z0-9_]*'
-    if t.value.lower() in PalRes:
-        t.type = PalRes[t.value.lower()]
-
     return t
 
 
