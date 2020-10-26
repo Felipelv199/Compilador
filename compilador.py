@@ -1,5 +1,6 @@
 import os
 import ply.lex as lex
+from difflib import SequenceMatcher
 
 # os.system('flex compilador.l && gcc -o out lex.yy.c && out.exe examen.up')
 # os.system('flex compilador.l && gcc -o out lex.yy.c && out.exe')
@@ -68,7 +69,7 @@ def get_error_line(t):
         s += t.lexer.lexdata[i]
         if t.lexer.lexdata[i] == '\n':
             s = ''
-        elif i == t.lexer.lexpos-1:
+        elif i == t.lexer.lexpos:
             break
     return s.strip()
 
@@ -77,7 +78,7 @@ def write_lexical_error(t, error_description):
     error_lineno = t.lexer.lineno
     error = t.value.strip()
     error_line = get_error_line(t)
-    error_file.write('{:<10}{:<30}{:<40}{}\n'.format(
+    error_file.write('{:<10}|{:<30}|{:<40}|{}\n'.format(
         error_lineno, error, error_description, error_line))
 
 
@@ -101,9 +102,14 @@ def t_IDError(t):
 def t_ID(t):
     r'[a-zA-Z_][a-zA-Z0-9_]*'
     if t.value.lower() in PalRes:
-        lex_file.write("{:<40}<{}>\n".format(t.value, 'PalRes'))
+        lex_file.write("{:<40}|<{}>\n".format(t.value, 'PalRes'))
         return
-
+    for palabra in PalRes:
+        similarity = SequenceMatcher(None, t.value.lower(), palabra).ratio()
+        if similarity > .85:
+            write_lexical_error(
+                t, '<lexico>Palabra reservada mal escrita, quisiste decir {}'.format(palabra))
+            return
     return t
 
 
@@ -151,14 +157,14 @@ file = open("{}.up".format(file_name), "r")
 lex_file = open("{}.lex".format(file_name), "w")
 lex_file.write(
     "----------------------------------------------------------------------------\n")
-lex_file.write(("{:<40}{}\n").format('Lexema', 'Token'))
+lex_file.write(("{:<40}|{}\n").format('Lexema', 'Token'))
 lex_file.write(
     "----------------------------------------------------------------------------\n")
 
 error_file = open("{}.err".format(file_name), "w")
 error_file.write(
     "----------------------------------------------------------------------------------------------------\n")
-error_file.write(("{:<10}{:<30}{:<40}{}\n").format(
+error_file.write(("{:<10}|{:<30}|{:<40}|{}\n").format(
     'Linea', 'Error', 'Descripcion', 'Linea Del Error'))
 error_file.write(
     "----------------------------------------------------------------------------------------------------\n")
@@ -173,7 +179,7 @@ while True:
     tok = lexer.token()
     if not tok:
         break      # No more input
-    lex_file.write("{:<40}<{}>\n".format(tok.value, tok.type))
+    lex_file.write("{:<40}|<{}>\n".format(tok.value, tok.type))
 
 lex_file.close()
 error_file.close()

@@ -1,6 +1,6 @@
-Imprime("Dame un numero: );
+Imprime("Dame un numero: ");
       lee(n);
       Imprime("Factorial R]recursivo I]interactivo S]salir: ");
       Lee(opc);
-constantes 0PI  :=3.1816;
-           MAX:=30;
+constantes PI:=3.1816;
+           MAX:=30.15;
