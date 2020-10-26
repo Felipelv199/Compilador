@@ -2,4 +2,4 @@
 
 Run command
 
-### python compilador.py
+> python compilador.py
