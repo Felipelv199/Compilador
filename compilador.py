@@ -72,6 +72,14 @@ def get_error_line(t):
     return s.strip()
 
 
+def write_lexical_error(t, error_description):
+    error_lineno = t.lexer.lineno
+    error = t.value
+    error_line = get_error_line(t)
+    error_file.write('{:<10}{:<30}{:<40}{}\n'.format(
+        error_lineno, error, error_description, error_line))
+
+
 t_Delim = r'([.,;:()[]|])'
 t_OpArit = r'[+-/%^*]'
 t_OpRel = r'=|(<>)|<|>|(<=)|(>=)'
@@ -82,6 +90,11 @@ t_CteLog = r'(verdadero)|(false)'
 def t_OpAsig(t):
     r':='
     return t
+
+
+def t_CteRealError(t):
+    r'\d+([.]|E)'
+    write_lexical_error(t, '<lexico>Se esperaba <digito>')
 
 
 def t_CteReal(t):
@@ -96,13 +109,7 @@ def t_CteEnt(t):
 
 def t_CteAlfaError(t):
     r'["]([^"^;^\n]*)(;|\n)'
-    error_lineno = t.lexer.lineno
-    error = t.value
-    error_description = '<lexico>Constante alf sin cerrar'
-    error_line = get_error_line(t)
-    error_file.write('{:<10}{:<30}{:<40}{}\n'.format(
-        error_lineno, error, error_description, error_line))
-    print(error_lineno, error, error_description, error_line)
+    write_lexical_error(t, '<lexico>Constante alf sin cerrar')
 
 
 def t_CteAlfa(t):
