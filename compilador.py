@@ -74,7 +74,7 @@ def get_error_line(t):
 
 def write_lexical_error(t, error_description):
     error_lineno = t.lexer.lineno
-    error = t.value
+    error = t.value.strip()
     error_line = get_error_line(t)
     error_file.write('{:<10}{:<30}{:<40}{}\n'.format(
         error_lineno, error, error_description, error_line))
@@ -93,7 +93,7 @@ def t_OpAsig(t):
 
 
 def t_CteRealError(t):
-    r'\d+([.]|E)'
+    r'\d+([.]|E)([^\d]*)(;|\n)'
     write_lexical_error(t, '<lexico>Se esperaba <digito>')
 
 

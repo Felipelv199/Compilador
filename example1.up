@@ -2,5 +2,5 @@ Imprime("Dame un numero: );
       lee(n);
       Imprime("Factorial R]recursivo I]interactivo S]salir: ");
       Lee(opc);
-constantes PI:=3.141592;
+constantes PI:=3.;
            MAX:=30;
