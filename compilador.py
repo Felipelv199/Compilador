@@ -12,7 +12,9 @@ tokens = [
     'OpAsig',
     'CteEnt',
     'CteReal',
+    'CteRealError',
     'CteAlfa',
+    'CteAlfaError',
     'CteLog',
     'ID',
 ]
@@ -58,6 +60,18 @@ PalRes = {
 
 tokens += PalRes.values()
 
+
+def get_error_line(t):
+    s = ''
+    for i in range(len(t.lexer.lexdata)):
+        s += t.lexer.lexdata[i]
+        if t.lexer.lexdata[i] == '\n':
+            s = ''
+        elif i == t.lexer.lexpos-1:
+            break
+    return s.strip()
+
+
 t_Delim = r'([.,;:()[]|])'
 t_OpArit = r'[+-/%^*]'
 t_OpRel = r'=|(<>)|<|>|(<=)|(>=)'
@@ -80,6 +94,17 @@ def t_CteEnt(t):
     return t
 
 
+def t_CteAlfaError(t):
+    r'["]([^"^;^\n]*)(;|\n)'
+    error_lineno = t.lexer.lineno
+    error = t.value
+    error_description = '<lexico>Constante alf sin cerrar'
+    error_line = get_error_line(t)
+    error_file.write('{:<10}{:<30}{:<40}{}\n'.format(
+        error_lineno, error, error_description, error_line))
+    print(error_lineno, error, error_description, error_line)
+
+
 def t_CteAlfa(t):
     r'["]([^"]*)["]'
     return t
@@ -93,7 +118,7 @@ def t_ID(t):
     return t
 
 
-t_ignore = ' \t\n'
+t_ignore = ' \t'
 
 
 def t_newline(t):
@@ -111,17 +136,18 @@ file_name = "example1"
 file = open("{}.up".format(file_name), "r")
 lex_file = open("{}.lex".format(file_name), "w")
 lex_file.write(
-    "---------------------------------------------------------------------\n")
-lex_file.write("Lexema\t\t\t\t\tToken\n")
+    "----------------------------------------------------------------------------\n")
+lex_file.write(("{:<40}{}\n").format('Lexema', 'Token'))
 lex_file.write(
-    "---------------------------------------------------------------------\n")
+    "----------------------------------------------------------------------------\n")
 
 error_file = open("{}.err".format(file_name), "w")
 error_file.write(
-    "---------------------------------------------------------------------\n")
-error_file.write("Línea\tError\t\t\t\tDescripción\t\t\t\tLinea Del Error\n")
+    "----------------------------------------------------------------------------------------------------\n")
+error_file.write(("{:<10}{:<30}{:<40}{}\n").format(
+    'Linea', 'Error', 'Descripcion', 'Linea Del Error'))
 error_file.write(
-    "---------------------------------------------------------------------\n")
+    "----------------------------------------------------------------------------------------------------\n")
 
 # Build the lexer
 lexer = lex.lex()
@@ -133,8 +159,7 @@ while True:
     tok = lexer.token()
     if not tok:
         break      # No more input
-    lex_file.write("{}\t\t\t\t<{}>\n".format(tok.value, tok.type))
-    print(tok.type, tok.value)
+    lex_file.write("{:<40}<{}>\n".format(tok.value, tok.type))
 
 lex_file.close()
 error_file.close()
