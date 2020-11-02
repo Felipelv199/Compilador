@@ -5,4 +5,4 @@ Imprime("Dame un numero: ");
 constante PI:=3.;
            MAX:=30.15;
 verdadero
-+
+b:=7,
