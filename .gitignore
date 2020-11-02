@@ -1,6 +1,11 @@
+parsetab.py
+
+# Extension Files
 *.exe
 *.c
 *.pptx
 *.lex
 *.err
 *.l
+__pycache__
+*.out

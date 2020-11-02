@@ -16,6 +16,8 @@ tokens = [
     'CteLog',
     'IDError',
     'ID',
+    'PalRes',
+    'PLUS'
 ]
 
 PalRes = {
@@ -64,9 +66,9 @@ def get_error_line(t):
     s = ''
     for i in range(len(t.lexer.lexdata)):
         s += t.lexer.lexdata[i]
-        if t.lexer.lexdata[i] == '\n' and i < t.lexer.lexpos:
+        if t.lexer.lexdata[i] == '\n' and i < t.lexer.lexpos-1:
             s = ''
-        elif i >= t.lexer.lexpos and t.lexer.lexdata[i] == ';' or t.lexer.lexdata[i] == '\n':
+        elif i >= t.lexer.lexpos-1 and t.lexer.lexdata[i] == ';' or t.lexer.lexdata[i] == '\n':
             break
     return s.strip()
 
@@ -84,6 +86,7 @@ t_OpArit = r'[+-/%^*]'
 t_OpRel = r'=|(<>)|<|>|(<=)|(>=)'
 t_OpLog = r'y|(no)|o'
 t_CteLog = r'(verdadero)|(false)'
+t_PLUS = r'[+]'
 
 
 def t_OpAsig(t):
@@ -99,8 +102,8 @@ def t_IDError(t):
 def t_ID(t):
     r'[a-zA-Z_][a-zA-Z0-9_]*'
     if t.value.lower() in PalRes:
-        lex_file.write("{:<40}|<{}>\n".format(t.value, 'PalRes'))
-        return
+        t.type = 'PalRes'
+        return t
     for palabra in PalRes:
         similarity = SequenceMatcher(None, t.value.lower(), palabra).ratio()
         if similarity > .85:
@@ -122,6 +125,7 @@ def t_CteReal(t):
 
 def t_CteEnt(t):
     r'\d+'
+    t.value = int(t.value)
     return t
 
 
