@@ -85,8 +85,12 @@ t_Delim = r'([.,;:()[]|])'
 t_OpArit = r'[+-/%^*]'
 t_OpRel = r'=|(<>)|<|>|(<=)|(>=)'
 t_OpLog = r'y|(no)|o'
-t_CteLog = r'(verdadero)|(false)'
 t_PLUS = r'[+]'
+
+
+def t_CteLog(t):
+    r'(verdadero)|(false)'
+    return t
 
 
 def t_OpAsig(t):

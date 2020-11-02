@@ -4,3 +4,5 @@ Imprime("Dame un numero: ");
       Lee(opc);
 constante PI:=3.;
            MAX:=30.15;
+verdadero
++
