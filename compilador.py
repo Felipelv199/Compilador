@@ -99,7 +99,7 @@ def t_OpAsig(t):
 
 
 def t_IDError(t):
-    r'[\d][a-zA-Z0-9_]*[ ]*((:=)|,|[(])'
+    r'[\d][a-zA-Z0-9_]*[ ]*((:=)|[(])'
     write_lexical_error(t, '<lexico>Un identificador no comienza con <digito>')
 
 
