@@ -1,21 +1,16 @@
-# Yacc example
-
 import ply.yacc as yacc
-
-# Get the token map from the lexer.  This is required.
 from compilador import tokens
 
 
-def p_expArit(p):
-    'ExpArit : CteEnt OpArit CteEnt'
-    if p[2] == '+':
-        p[0] = p[1] + p[3]
-    if p[2] == '-':
-        p[0] = p[1] - p[3]
-    if p[2] == '*':
-        p[0] = p[1] * p[3]
-    if p[2] == '/':
-        p[0] = p[1] / p[3]
+def p_grupoIds_Delim(p):
+    '''GpoIds : GpoIds Delim GpoId
+    | GpoIds Delim'''
+    p[0] = p[1]
+
+
+def p_grupoIds(p):
+    'GpoIds : GpoId'
+    p[0] = p[1]
 
 
 def p_grupoId(p):
@@ -26,11 +21,22 @@ def p_grupoId(p):
     p[0] = p[1]
 
 
+def p_expArit(p):
+    'GpoId : CteEnt OpArit CteEnt'
+    if p[2] == '+':
+        p[0] = p[1] + p[3]
+    if p[2] == '-':
+        p[0] = p[1] - p[3]
+    if p[2] == '*':
+        p[0] = p[1] * p[3]
+    if p[2] == '/':
+        p[0] = p[1] / p[3]
+
+
 def p_error(p):
     print("Syntax error in input!")
 
 
-# Build the parser
 parser = yacc.yacc()
 
 while True:
