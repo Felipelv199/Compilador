@@ -12,9 +12,17 @@ class sintactico:
             '', '', error_description, ''))
 
     def start_sintactic(self):
+        def p_variables_PalRes(p):
+            'variables : PalRes GpoVars'
+            p[0] = p[1] + p[2]
+
+        def p_variables(p):
+            'variables : GpoVars'
+            p[0] = p[1]
+
         def p_gpoVars_Tipes(p):
             'GpoVars : GpoVars GpoVar'
-            p[0] = p[1]
+            p[0] = p[1] + p[2]
 
         def p_gpoVars(p):
             'GpoVars : GpoVar'

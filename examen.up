@@ -2,7 +2,8 @@ constantes PI:=3.141592;
            MAX:=30;
 
 variables i, j, k, n, vector[MAX], matriz[MAX][MAX]:Entero;
-          r, s, t:real;Alfa, Beta:Alfabetico;
+          r, s, t:real;
+          Alfa, Beta:Alfabetico;
           Log1, Log2:Logico;
 
 Funcion FacRec(n:Entero):Entero;

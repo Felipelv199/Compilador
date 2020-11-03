@@ -5,4 +5,6 @@ Imprime("Dame un numero: ");
 constantes PI:=3.;
            MAX:=30.15;
 verdadero
-b:=7,
+variables r, s, t:real;
+      Alfa, Beta:Alfabetico;
+      Log1, Log2:Logico;
