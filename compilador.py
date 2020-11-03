@@ -1,4 +1,4 @@
-from sintactico import start_sintactic
+from sintactico import sintactico
 from lexico import lexico
 
 file_name = "example1"
@@ -18,9 +18,13 @@ error_file.write(("{:<10}|{:<30}|{:<40}|{}\n").format(
     'Linea', 'Error', 'Descripcion', 'Linea Del Error'))
 error_file.write(
     "----------------------------------------------------------------------------------------------------\n")
+
 lex = lexico(file, lex_file, error_file)
 lex.start_lexico()
-start_sintactic(file)
+
+sintactic = sintactico(file, error_file)
+sintactic.start_sintactic()
+
 file.close()
 lex_file.close()
 error_file.close()
