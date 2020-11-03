@@ -1,5 +1,5 @@
 import ply.yacc as yacc
-from compilador import tokens
+from lexico import tokens
 
 
 def p_gpoVar(p):
@@ -52,19 +52,15 @@ def p_error(p):
     print("Syntax error in input!")
 
 
-file_name = "example1"
-file = open("{}.up".format(file_name), "r")
-parser = yacc.yacc()
-
-while True:
-    try:
-        s = input('calc > ')
-    except EOFError:
-        break
-    if not s:
-        continue
-    print(s)
-    result = parser.parse(s)
-    print(result)
-
-file.close()
+def start_sintactic(f):
+    parser = yacc.yacc()
+    while True:
+        try:
+            s = input('calc > ')
+        except EOFError:
+            break
+        if not s:
+            continue
+        print(s)
+        result = parser.parse(s)
+        print(result)
