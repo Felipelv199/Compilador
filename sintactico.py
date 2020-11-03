@@ -3,26 +3,40 @@ from lexico import tokens
 
 
 class sintactico:
-    def __init__(self, f, f_error):
-        self.file = f
+    def __init__(self, inpt, f_error):
+        self.input = inpt
         self.file_error = f_error
 
+    def write_sintactic_error(self, error_description):
+        self.file_error.write('{:<10}|{:<30}|{:<40}|{}\n'.format(
+            '', '', error_description, ''))
+
     def start_sintactic(self):
+        def p_gpoVars_Tipes(p):
+            'GpoVars : GpoVars GpoVar'
+            p[0] = p[1]
+
+        def p_gpoVars(p):
+            'GpoVars : GpoVar'
+            p[0] = p[1]
+
         def p_gpoVar(p):
-            '''GpoVar : GpoIds Delim PalRes Delim
-            '''
+            'GpoVar : GpoIds Delim PalRes Delim'
             if p[2] != ':':
-                print('<sintactico> Se esperan dos puntos antes de poner los tipos')
+                self.write_sintactic_error(
+                    '<sintactico> Se esperan dos puntos antes de poner los tipos')
                 return
             if p[4] != ';':
-                print('<sintactico> Se espera un punto y coma terminando la sentecia')
+                self.write_sintactic_error(
+                    '<sintactico> Se espera un punto y coma terminando la sentecia')
                 return
             p[0] = p[1] + p[2] + p[3] + p[4]
 
         def p_grupoIds_Delim_Coma(p):
             'GpoIds : GpoIds Delim GpoId'
             if p[2] != ',':
-                print('<sintactico> Se esperaba una coma para poder declarar varios IDs')
+                self.write_sintactic_error(
+                    '<sintactico> Se esperaba una coma para poder declarar varios IDs')
                 return
             p[0] = p[1] + p[2] + p[3]
 
@@ -51,15 +65,14 @@ class sintactico:
 
         def p_error(p):
             print("Syntax error in input!")
-
         parser = yacc.yacc()
+        lines = self.input.split("\n")
         while True:
             try:
-                s = input('calc > ')
-            except EOFError:
+                s = lines.pop(0)
+            except:
                 break
             if not s:
                 continue
-            print(s)
             result = parser.parse(s)
             print(result)

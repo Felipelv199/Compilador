@@ -64,8 +64,8 @@ tokens += PalRes.values()
 
 class lexico:
 
-    def __init__(self, f, f_lex, f_error):
-        self.file = f
+    def __init__(self, inpt, f_lex, f_error):
+        self.input = inpt
         self.file_lex = f_lex
         self.file_error = f_error
 
@@ -80,6 +80,8 @@ class lexico:
         return s.strip()
 
     def write_lexical_error(self, t, error_description):
+        if t.lexer.lineno == -1:
+            return
         error_lineno = t.lexer.lineno
         error = t.value.strip()
         error_line = self.get_error_line(t)
@@ -150,17 +152,19 @@ class lexico:
 
         def t_error(t):
             print("Illegal character '%s'" % t.value[0])
-            self.file_error.write('{}\t\t{}'.format(t.lexer.lineno, t.value))
+            if t.lexer.lineno != -1:
+                self.file_error.write(
+                    '{}\t\t{}'.format(t.lexer.lineno, t.value))
             t.lexer.skip(1)
 
         # Build the lexer
         lexer = lex.lex()
-
-        lexer.input(self.file.read())
+        lexer.input(self.input)
 
         # Tokenize
         while True:
             tok = lexer.token()
             if not tok:
+                lexer.lineno = -1
                 break      # No more input
             self.file_lex.write("{:<40}|<{}>\n".format(tok.value, tok.type))

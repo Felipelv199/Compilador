@@ -2,7 +2,7 @@ Imprime("Dame un numero: ");
       lee(n);
       Imprime("Factorial R]recursivo I]interactivo S]salir: ");
       Lee(opc);
-constante PI:=3.10;
+constantes PI:=3.;
            MAX:=30.15;
 verdadero
 b:=7,

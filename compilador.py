@@ -19,10 +19,12 @@ error_file.write(("{:<10}|{:<30}|{:<40}|{}\n").format(
 error_file.write(
     "----------------------------------------------------------------------------------------------------\n")
 
-lex = lexico(file, lex_file, error_file)
+s = file.read()
+
+lex = lexico(s, lex_file, error_file)
 lex.start_lexico()
 
-sintactic = sintactico(file, error_file)
+sintactic = sintactico(s, error_file)
 sintactic.start_sintactic()
 
 file.close()
