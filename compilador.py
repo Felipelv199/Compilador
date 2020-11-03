@@ -186,5 +186,6 @@ while True:
         break      # No more input
     lex_file.write("{:<40}|<{}>\n".format(tok.value, tok.type))
 
+file.close()
 lex_file.close()
 error_file.close()
