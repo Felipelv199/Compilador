@@ -137,3 +137,4 @@ class sintactico:
             if not s:
                 continue
             result = parser.parse(s)
+            print(result)
