@@ -18,10 +18,38 @@ class sintactico:
         return s
 
     def start_sintactic(self):
-        def p_Prgrm_(p):
+        def p_Prgrm(p):
             '''
             Prgrm : variables
-                  | GpoPars
+                  | FuncProc
+            '''
+            p[0] = self.join_result(p)
+
+        def p_FuncProc(p):
+            '''
+            FuncProc : Func
+                     | Proc
+            '''
+            p[0] = self.join_result(p)
+
+        def p_Func(p):
+            '''
+            Func : FUNCION ID LPARENTHESIS Params RPARENTHESIS 2DOTS Tipo DOTCOMMA
+                 | FUNCION ID LPARENTHESIS RPARENTHESIS 2DOTS Tipo DOTCOMMA
+            '''
+            p[0] = self.join_result(p)
+
+        def p_Proc(p):
+            '''
+            Proc : PROCEDIMIENTO ID LPARENTHESIS Params RPARENTHESIS DOTCOMMA
+                 | PROCEDIMIENTO ID LPARENTHESIS RPARENTHESIS DOTCOMMA
+            '''
+            p[0] = self.join_result(p)
+
+        def p_Params(p):
+            '''
+            Params : GpoPars 2DOTS Tipo
+                   | GpoPars 2DOTS Tipo Params
             '''
             p[0] = self.join_result(p)
 
@@ -47,8 +75,8 @@ class sintactico:
 
         def p_grupoVars(p):
             '''
-            GpoVars : GpoIds 2POINTS Tipo DOTCOMMA GpoVars
-                    | GpoIds 2POINTS Tipo DOTCOMMA
+            GpoVars : GpoIds 2DOTS Tipo DOTCOMMA GpoVars
+                    | GpoIds 2DOTS Tipo DOTCOMMA
             '''
             p[0] = self.join_result(p)
 
@@ -73,15 +101,15 @@ class sintactico:
 
         def p_Dimens_1D(p):
             '''
-            Dimens : Delim ID Delim
-                   | Delim CteEnt Delim
+            Dimens : LBRACKET ID RBRACKET
+                   | LBRACKET CteEnt RBRACKET
             '''
             p[0] = self.join_result(p)
 
         def p_Dimens_2D(p):
             '''
-            Dimens : Delim ID Delim Delim ID Delim
-                   | Delim CteEnt Delim Delim CteEnt Delim
+            Dimens : LBRACKET ID RBRACKET LBRACKET ID RBRACKET
+                   | LBRACKET CteEnt RBRACKET LBRACKET CteEnt RBRACKET
             '''
             p[0] = self.join_result(p)
 

@@ -58,9 +58,14 @@ PalRes = {
     "programa": "PROGRAMA",
     "findeprograma": "FINDEPROGRAMA",
     'limpiaPantalla': 'LIMPIAPANTALLA',
+    '.': 'DOT',
     ",": "COMMA",
-    ":": "2POINTS",
-    ";": "DOTCOMMA"
+    ":": "2DOTS",
+    ";": "DOTCOMMA",
+    "[": "LBRACKET",
+    "]": "RBRACKET",
+    "(": "LPARENTHESIS",
+    ")": "RPARENTHESIS",
 }
 
 tokens += PalRes.values()
@@ -105,12 +110,7 @@ class lexico:
 
         def t_Delim(t):
             r'([.,;:()[]|])'
-            if t.value == ',':
-                t.type = PalRes[',']
-            if t.value == ':':
-                t.type = PalRes[':']
-            if t.value == ';':
-                t.type = PalRes[';']
+            t.type = PalRes[t.value]
             return t
 
         def t_CteLog(t):
