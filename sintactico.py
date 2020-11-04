@@ -12,6 +12,56 @@ class sintactico:
             '', '', error_description, ''))
 
     def start_sintactic(self):
+
+        def d_Prgrm(p):
+            '''Prgrm : Prgrm variables |
+            Prgrm FuncProc
+            '''
+            p[0] = p[1] + p[2]
+
+        def d_Prgrm(p):
+            '''Prgrm : variables |
+            FuncProc
+            '''
+            p[0] = p[1]
+
+        def p_FuncProc(p):
+            '''FuncProc : FuncProc Func 
+            | FuncProc Proc
+            '''
+            p[0] = p[1] + p[2]
+
+        def p_FuncProc(p):
+            '''
+            FuncProc : Func
+            | Proc
+            '''
+            p[0] = p[1]
+
+        def p_Proc(p):
+            'Proc : PalRes ID Delim Params Delim Delim PalRes Delim'
+            p[0] = p[1]
+
+        def p_Func(p):
+            'Func : PalRes ID Delim Params Delim Delim'
+            p[0] = p[1]
+
+        def p_Params_Delim(p):
+            'Params : Params GpoPars Delim PalRes'
+            p[0] = p[1]
+
+        def p_Params(p):
+            'Params : GpoPars Delim PalRes'
+            p[0] = p[1]
+
+        def p_GpoPars_Delim(p):
+            'GpoPars : GpoPars ID'
+            p[0] = p[1]
+
+        def p_GpoPars(p):
+            'GpoPars : ID'
+            p[0] = p[1]
+
         def p_variables_PalRes(p):
             'variables : PalRes GpoVars'
             p[0] = p[1] + p[2]
@@ -57,7 +107,8 @@ class sintactico:
             | ID OpAsig CteReal
             | ID OpAsig CteAlfa
             | ID OpAsig CteLog
-            | ID'''
+            | ID
+            '''
             p[0] = p[1]
 
         def p_expArit(p):
@@ -73,6 +124,7 @@ class sintactico:
 
         def p_error(p):
             print("Syntax error in input!")
+
         parser = yacc.yacc()
         lines = self.input.split("\n")
         while True:

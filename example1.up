@@ -1,10 +1,7 @@
-Imprime("Dame un numero: ");
-      lee(n);
-      Imprime("Factorial R]recursivo I]interactivo S]salir: ");
-      Lee(opc);
-constantes PI:=3.;
-           MAX:=30.15;
-verdadero
 variables r, s, t:real;
       Alfa, Beta:Alfabetico;
       Log1, Log2:Logico;
+
+Funcion FacRec(n:Entero):Entero;
+Funcion FacIter(n:Entero):Entero;
+Procedimiento LeeVec(k:Entero);
