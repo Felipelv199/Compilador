@@ -12,26 +12,26 @@ class sintactico:
             '', '', error_description, ''))
 
     def start_sintactic(self):
-
-        def d_Prgrm(p):
-            '''Prgrm : Prgrm variables |
-            Prgrm FuncProc
+        def p_Prgrm_(p):
+            '''Prgrm : Prgrm variables 
+            | Prgrm FuncProc
             '''
-            p[0] = p[1] + p[2]
+            p[0] = p[1]
 
-        def d_Prgrm(p):
-            '''Prgrm : variables |
-            FuncProc
+        def p_Prgrm_Blocks(p):
+            '''Prgrm : variables 
+            | FuncProc
             '''
             p[0] = p[1]
 
         def p_FuncProc(p):
-            '''FuncProc : FuncProc Func 
+            '''
+            FuncProc : FuncProc Func
             | FuncProc Proc
             '''
-            p[0] = p[1] + p[2]
+            p[0] = p[1]
 
-        def p_FuncProc(p):
+        def p_FuncProc_Blocks(p):
             '''
             FuncProc : Func
             | Proc
@@ -62,12 +62,14 @@ class sintactico:
             'GpoPars : ID'
             p[0] = p[1]
 
-        def p_variables_PalRes(p):
-            'variables : PalRes GpoVars'
+        def p_variables(p):
+            '''variables : variables GpoVars
+            | variables PalRes GpoVars'''
             p[0] = p[1] + p[2]
 
-        def p_variables(p):
-            'variables : GpoVars'
+        def p_variables_Blocks(p):
+            '''variables : GpoVars
+            | PalRes GpoVars'''
             p[0] = p[1]
 
         def p_gpoVars_Tipes(p):
@@ -135,4 +137,3 @@ class sintactico:
             if not s:
                 continue
             result = parser.parse(s)
-            print(result)
