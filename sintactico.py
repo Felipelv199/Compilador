@@ -11,120 +11,86 @@ class sintactico:
         self.file_error.write('{:<10}|{:<30}|{:<40}|{}\n'.format(
             '', '', error_description, ''))
 
+    def join_result(self, p):
+        s = ''
+        for i in range(1, len(p)):
+            s += str(p[i])
+        return s
+
     def start_sintactic(self):
         def p_Prgrm_(p):
-            '''Prgrm : Prgrm variables 
-            | Prgrm FuncProc
             '''
-            p[0] = p[1]
-
-        def p_Prgrm_Blocks(p):
-            '''Prgrm : variables 
-            | FuncProc
+            Prgrm : variables
+                  | GpoPars
             '''
-            p[0] = p[1]
+            p[0] = self.join_result(p)
 
-        def p_FuncProc(p):
+        def p_grupoPars(p):
             '''
-            FuncProc : FuncProc Func
-            | FuncProc Proc
+            GpoPars : GpoPar
+                    | GpoPar COMMA GpoPars
             '''
-            p[0] = p[1]
+            p[0] = self.join_result(p)
 
-        def p_FuncProc_Blocks(p):
+        def p_grupoPar(p):
             '''
-            FuncProc : Func
-            | Proc
+            GpoPar : ID
             '''
-            p[0] = p[1]
-
-        def p_Proc(p):
-            'Proc : PalRes ID Delim Params Delim Delim PalRes Delim'
-            p[0] = p[1]
-
-        def p_Func(p):
-            'Func : PalRes ID Delim Params Delim Delim'
-            p[0] = p[1]
-
-        def p_Params_Delim(p):
-            'Params : Params GpoPars Delim PalRes'
-            p[0] = p[1]
-
-        def p_Params(p):
-            'Params : GpoPars Delim PalRes'
-            p[0] = p[1]
-
-        def p_GpoPars_Delim(p):
-            'GpoPars : GpoPars ID'
-            p[0] = p[1]
-
-        def p_GpoPars(p):
-            'GpoPars : ID'
-            p[0] = p[1]
+            p[0] = self.join_result(p)
 
         def p_variables(p):
-            '''variables : variables GpoVars
-            | variables PalRes GpoVars'''
-            p[0] = p[1] + p[2]
+            '''
+            variables : VARIABLES GpoVars
+                      | GpoVars
+            '''
+            p[0] = self.join_result(p)
 
-        def p_variables_Blocks(p):
-            '''variables : GpoVars
-            | PalRes GpoVars'''
-            p[0] = p[1]
-
-        def p_gpoVars_Tipes(p):
-            'GpoVars : GpoVars GpoVar'
-            p[0] = p[1] + p[2]
-
-        def p_gpoVars(p):
-            'GpoVars : GpoVar'
-            p[0] = p[1]
-
-        def p_gpoVar(p):
-            'GpoVar : GpoIds Delim PalRes Delim'
-            if p[2] != ':':
-                self.write_sintactic_error(
-                    '<sintactico> Se esperan dos puntos antes de poner los tipos')
-                return
-            if p[4] != ';':
-                self.write_sintactic_error(
-                    '<sintactico> Se espera un punto y coma terminando la sentecia')
-                return
-            p[0] = p[1] + p[2] + p[3] + p[4]
-
-        def p_grupoIds_Delim_Coma(p):
-            'GpoIds : GpoIds Delim GpoId'
-            if p[2] != ',':
-                self.write_sintactic_error(
-                    '<sintactico> Se esperaba una coma para poder declarar varios IDs')
-                return
-            p[0] = p[1] + p[2] + p[3]
+        def p_grupoVars(p):
+            '''
+            GpoVars : GpoIds 2POINTS Tipo DOTCOMMA GpoVars
+                    | GpoIds 2POINTS Tipo DOTCOMMA
+            '''
+            p[0] = self.join_result(p)
 
         def p_grupoIds(p):
-            'GpoIds : GpoId'
-            p[0] = p[1]
+            ''' 
+            GpoIds : GpoId
+                   | GpoPar
+                   | GpoId COMMA GpoIds
+                   | GpoPar COMMA GpoIds
+            '''
+            p[0] = self.join_result(p)
 
         def p_grupoId(p):
-            '''GpoId : ID OpAsig CteEnt
-            | ID OpAsig CteReal
-            | ID OpAsig CteAlfa
-            | ID OpAsig CteLog
-            | ID
             '''
-            p[0] = p[1]
+            GpoId : ID OpAsig CteEnt
+                  | ID OpAsig CteReal
+                  | ID OpAsig CteAlfa
+                  | ID OpAsig CteLog
+                  | ID Dimens
+            '''
+            p[0] = self.join_result(p)
 
-        def p_expArit(p):
-            'GpoId : CteEnt OpArit CteEnt'
-            if p[2] == '+':
-                p[0] = p[1] + p[3]
-            if p[2] == '-':
-                p[0] = p[1] - p[3]
-            if p[2] == '*':
-                p[0] = p[1] * p[3]
-            if p[2] == '/':
-                p[0] = p[1] / p[3]
+        def p_Dimens_1D(p):
+            '''
+            Dimens : Delim ID Delim
+                   | Delim CteEnt Delim
+            '''
+            p[0] = self.join_result(p)
+
+        def p_Dimens_2D(p):
+            '''
+            Dimens : Delim ID Delim Delim ID Delim
+                   | Delim CteEnt Delim Delim CteEnt Delim
+            '''
+            p[0] = self.join_result(p)
+
+        def p_empty(p):
+            'empty :'
+            pass
 
         def p_error(p):
+            print(p)
             print("Syntax error in input!")
 
         parser = yacc.yacc()

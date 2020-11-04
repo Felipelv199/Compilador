@@ -17,7 +17,8 @@ tokens = [
     'IDError',
     'ID',
     'PalRes',
-    'PLUS'
+    'PLUS',
+    'Tipo'
 ]
 
 PalRes = {
@@ -57,6 +58,9 @@ PalRes = {
     "programa": "PROGRAMA",
     "findeprograma": "FINDEPROGRAMA",
     'limpiaPantalla': 'LIMPIAPANTALLA',
+    ",": "COMMA",
+    ":": "2POINTS",
+    ";": "DOTCOMMA"
 }
 
 tokens += PalRes.values()
@@ -90,18 +94,27 @@ class lexico:
 
     def start_lexico(self):
 
-        t_Delim = r'([.,;:()[]|])'
         t_OpArit = r'[+-/%^*]'
         t_OpRel = r'=|(<>)|<|>|(<=)|(>=)'
         t_OpLog = r'y|(no)|o'
         t_PLUS = r'[+]'
 
-        def t_CteLog(t):
-            r'(verdadero)|(false)'
-            return t
-
         def t_OpAsig(t):
             r':='
+            return t
+
+        def t_Delim(t):
+            r'([.,;:()[]|])'
+            if t.value == ',':
+                t.type = PalRes[',']
+            if t.value == ':':
+                t.type = PalRes[':']
+            if t.value == ';':
+                t.type = PalRes[';']
+            return t
+
+        def t_CteLog(t):
+            r'(verdadero)|(falso)'
             return t
 
         def t_IDError(t):
@@ -112,7 +125,10 @@ class lexico:
         def t_ID(t):
             r'[a-zA-Z_][a-zA-Z0-9_]*'
             if t.value.lower() in PalRes:
-                t.type = 'PalRes'
+                if t.value.lower() == 'entero' or t.value.lower() == 'real' or t.value.lower() == 'alfabetico' or t.value.lower() == 'logico':
+                    t.type = 'Tipo'
+                    return t
+                t.type = PalRes[t.value.lower()]
                 return t
             for palabra in PalRes:
                 similarity = SequenceMatcher(
