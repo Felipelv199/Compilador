@@ -17,8 +17,6 @@ tokens = [
     'IDError',
     'ID',
     'PalRes',
-    'PLUS',
-    'Tipo'
 ]
 
 PalRes = {
@@ -66,6 +64,11 @@ PalRes = {
     "]": "RBRACKET",
     "(": "LPARENTHESIS",
     ")": "RPARENTHESIS",
+    "+": "PLUS",
+    "-": "MINUS",
+    "*": "ADD",
+    "/": "DIVIDE",
+    "tipo": "TIPO"
 }
 
 tokens += PalRes.values()
@@ -98,23 +101,36 @@ class lexico:
             error_lineno, error, error_description, error_line))
 
     def start_lexico(self):
+        def t_OpLog(t):
+            r'y|(no)|o'
+            self.file_lex.write("{:<40}|<{}>\n".format(t.value, t.type))
+            return t
 
-        t_OpArit = r'[+-/%^*]'
-        t_OpRel = r'=|(<>)|<|>|(<=)|(>=)'
-        t_OpLog = r'y|(no)|o'
-        t_PLUS = r'[+]'
+        def t_OpRel(t):
+            r'=|(<>)|<|>|(<=)|(>=)'
+            self.file_lex.write("{:<40}|<{}>\n".format(t.value, t.type))
+            return t
+
+        def t_OpArit(t):
+            r'[+-]|[/]|[*]'
+            self.file_lex.write("{:<40}|<{}>\n".format(t.value, t.type))
+            t.type = PalRes[t.value]
+            return t
 
         def t_OpAsig(t):
             r':='
+            self.file_lex.write("{:<40}|<{}>\n".format(t.value, t.type))
             return t
 
         def t_Delim(t):
             r'([.,;:()[]|])'
+            self.file_lex.write("{:<40}|<{}>\n".format(t.value, t.type))
             t.type = PalRes[t.value]
             return t
 
         def t_CteLog(t):
             r'(verdadero)|(falso)'
+            self.file_lex.write("{:<40}|<{}>\n".format(t.value, t.type))
             return t
 
         def t_IDError(t):
@@ -125,8 +141,9 @@ class lexico:
         def t_ID(t):
             r'[a-zA-Z_][a-zA-Z0-9_]*'
             if t.value.lower() in PalRes:
+                self.file_lex.write("{:<40}|<{}>\n".format(t.value, 'PalRes'))
                 if t.value.lower() == 'entero' or t.value.lower() == 'real' or t.value.lower() == 'alfabetico' or t.value.lower() == 'logico':
-                    t.type = 'Tipo'
+                    t.type = PalRes['tipo']
                     return t
                 t.type = PalRes[t.value.lower()]
                 return t
@@ -137,6 +154,7 @@ class lexico:
                     self.write_lexical_error(
                         t, '<lexico>Palabra reservada mal escrita, quisiste decir {}'.format(palabra))
                     return
+            self.file_lex.write("{:<40}|<{}>\n".format(t.value, t.type))
             return t
 
         def t_CteRealError(t):
@@ -145,11 +163,13 @@ class lexico:
 
         def t_CteReal(t):
             r'\d+([.]|E)\d+'
+            self.file_lex.write("{:<40}|<{}>\n".format(t.value, t.type))
             return t
 
         def t_CteEnt(t):
             r'\d+'
             t.value = int(t.value)
+            self.file_lex.write("{:<40}|<{}>\n".format(t.value, t.type))
             return t
 
         def t_CteAlfaError(t):
@@ -158,6 +178,7 @@ class lexico:
 
         def t_CteAlfa(t):
             r'["]([^"]*)["]'
+            self.file_lex.write("{:<40}|<{}>\n".format(t.value, t.type))
             return t
 
         t_ignore = ' \t'
@@ -173,14 +194,4 @@ class lexico:
                     '{}\t\t{}'.format(t.lexer.lineno, t.value))
             t.lexer.skip(1)
 
-        # Build the lexer
-        lexer = lex.lex()
-        lexer.input(self.input)
-
-        # Tokenize
-        while True:
-            tok = lexer.token()
-            if not tok:
-                lexer.lineno = -1
-                break      # No more input
-            self.file_lex.write("{:<40}|<{}>\n".format(tok.value, tok.type))
+        return lex.lex()

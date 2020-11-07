@@ -6,12 +6,10 @@ h,b:entero;
 r:=5, s:=8, t:=9,c:real;
 vector[MAX], matriz[MAX][MAX]:Entero;
 variables i, j, k, n, vector[MAX], matriz[MAX][MAX]:Entero;
-
 variables i, j, k, n, vector[MAX], matriz[MAX][MAX]:Entero;
           r, s, t:real;
           Alfa, Beta:Alfabetico;
           Log1, Log2:Logico;
-
 Funcion FacRec(n:Entero):Entero;
 Funcion FacIter(n:Entero):Entero;
 Procedimiento LeeVec(k:Entero);

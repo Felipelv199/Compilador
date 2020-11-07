@@ -17,7 +17,7 @@ class sintactico:
             s += str(p[i])
         return s
 
-    def start_sintactic(self):
+    def start_sintactic(self, lexer):
         def p_Prgrm(p):
             '''
             Prgrm : variables
@@ -34,8 +34,8 @@ class sintactico:
 
         def p_Func(p):
             '''
-            Func : FUNCION ID LPARENTHESIS Params RPARENTHESIS 2DOTS Tipo DOTCOMMA
-                 | FUNCION ID LPARENTHESIS RPARENTHESIS 2DOTS Tipo DOTCOMMA
+            Func : FUNCION ID LPARENTHESIS Params RPARENTHESIS 2DOTS TIPO DOTCOMMA
+                 | FUNCION ID LPARENTHESIS RPARENTHESIS 2DOTS TIPO DOTCOMMA
             '''
             p[0] = self.join_result(p)
 
@@ -48,8 +48,8 @@ class sintactico:
 
         def p_Params(p):
             '''
-            Params : GpoPars 2DOTS Tipo
-                   | GpoPars 2DOTS Tipo Params
+            Params : GpoPars 2DOTS TIPO
+                   | GpoPars 2DOTS TIPO Params
             '''
             p[0] = self.join_result(p)
 
@@ -75,8 +75,8 @@ class sintactico:
 
         def p_grupoVars(p):
             '''
-            GpoVars : GpoIds 2DOTS Tipo DOTCOMMA GpoVars
-                    | GpoIds 2DOTS Tipo DOTCOMMA
+            GpoVars : GpoIds 2DOTS TIPO DOTCOMMA GpoVars
+                    | GpoIds 2DOTS TIPO DOTCOMMA
             '''
             p[0] = self.join_result(p)
 
@@ -122,13 +122,11 @@ class sintactico:
             print("Syntax error in input!")
 
         parser = yacc.yacc()
-        lines = self.input.split("\n")
-        while True:
+        for line in self.input:
             try:
-                s = lines.pop(0)
+                s = line
             except:
                 break
             if not s:
                 continue
-            result = parser.parse(s)
-            print(result)
+            result = parser.parse(s, lexer=lexer)
