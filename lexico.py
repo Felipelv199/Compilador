@@ -68,7 +68,8 @@ PalRes = {
     "-": "MINUS",
     "*": "ADD",
     "/": "DIVIDE",
-    "tipo": "TIPO"
+    "tipo": "TIPO",
+    "salto": "SALTO"
 }
 
 tokens += PalRes.values()
@@ -126,6 +127,8 @@ class lexico:
             r'([.,;:()[]|])'
             self.file_lex.write("{:<40}|<{}>\n".format(t.value, t.type))
             t.type = PalRes[t.value]
+            if(t.value == ';'):
+                t.lexer.lineno += len(t.value)
             return t
 
         def t_CteLog(t):
@@ -181,11 +184,7 @@ class lexico:
             self.file_lex.write("{:<40}|<{}>\n".format(t.value, t.type))
             return t
 
-        t_ignore = ' \t'
-
-        def t_newline(t):
-            r'\n+'
-            t.lexer.lineno += len(t.value)
+        t_ignore = ' \t\n'
 
         def t_error(t):
             print("Illegal character '%s'" % t.value[0])

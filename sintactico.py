@@ -20,15 +20,33 @@ class sintactico:
     def start_sintactic(self, lexer):
         def p_Prgrm(p):
             '''
-            Prgrm : variables
-                  | FuncProc
+            Prgrm : variables FuncProc
+                  | variables
+                  | Block
+            '''
+            p[0] = self.join_result(p)
+
+        def p_Block(p):
+            '''
+            Block : Estatuto DOTCOMMA
+            '''
+            p[0] = self.join_result(p)
+
+        def p_Estatuto(p):
+            '''
+            Estatuto : SiEst
+            '''
+            p[0] = self.join_result(p)
+
+        def p_SiEst(p):
+            '''
+            SiEst : SI LPARENTHESIS RPARENTHESIS HACER
             '''
             p[0] = self.join_result(p)
 
         def p_FuncProc(p):
             '''
-            FuncProc : Func
-                     | Proc
+            FuncProc : Func Proc
             '''
             p[0] = self.join_result(p)
 
@@ -36,6 +54,8 @@ class sintactico:
             '''
             Func : FUNCION ID LPARENTHESIS Params RPARENTHESIS 2DOTS TIPO DOTCOMMA
                  | FUNCION ID LPARENTHESIS RPARENTHESIS 2DOTS TIPO DOTCOMMA
+                 | FUNCION ID LPARENTHESIS Params RPARENTHESIS 2DOTS TIPO DOTCOMMA Func
+                 | FUNCION ID LPARENTHESIS RPARENTHESIS 2DOTS TIPO DOTCOMMA Func
             '''
             p[0] = self.join_result(p)
 
@@ -43,6 +63,8 @@ class sintactico:
             '''
             Proc : PROCEDIMIENTO ID LPARENTHESIS Params RPARENTHESIS DOTCOMMA
                  | PROCEDIMIENTO ID LPARENTHESIS RPARENTHESIS DOTCOMMA
+                 | PROCEDIMIENTO ID LPARENTHESIS Params RPARENTHESIS DOTCOMMA Proc
+                 | PROCEDIMIENTO ID LPARENTHESIS RPARENTHESIS DOTCOMMA Proc
             '''
             p[0] = self.join_result(p)
 
@@ -69,7 +91,6 @@ class sintactico:
         def p_variables(p):
             '''
             variables : VARIABLES GpoVars
-                      | GpoVars
             '''
             p[0] = self.join_result(p)
 
@@ -81,7 +102,7 @@ class sintactico:
             p[0] = self.join_result(p)
 
         def p_grupoIds(p):
-            ''' 
+            '''
             GpoIds : GpoId
                    | GpoPar
                    | GpoId COMMA GpoIds
@@ -122,11 +143,6 @@ class sintactico:
             print("Syntax error in input!")
 
         parser = yacc.yacc()
-        for line in self.input:
-            try:
-                s = line
-            except:
-                break
-            if not s:
-                continue
-            result = parser.parse(s, lexer=lexer)
+        s = self.input
+        result = parser.parse(s, lexer=lexer)
+        print(result)

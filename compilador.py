@@ -19,7 +19,7 @@ error_file.write(("{:<10}|{:<30}|{:<40}|{}\n").format(
 error_file.write(
     "----------------------------------------------------------------------------------------------------\n")
 
-s = file.readlines()
+s = file.read()
 lex = lexico(s, lex_file, error_file)
 lexer = lex.start_lexico()
 
