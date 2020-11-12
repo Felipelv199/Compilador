@@ -1,3 +1,5 @@
+constantes PI:=3.141592;
+           MAX:=30;
 
 variables i, j, k, n, vector[MAX], matriz[MAX][MAX]:Entero;
           r, s, t:real;
@@ -9,12 +11,14 @@ variables i, j, k, n, vector[MAX], matriz[MAX][MAX]:Entero;
         f:=falso:logico;
         h,b:entero;
         r:=5, s:=8, t:=9,c:real;
-        vecto[MAX], matriz[MAX][MAX]:Entero;
+        vector[MAX], matriz[MAX][MAX]:Entero;
 
-Funcion FacRec(n:Entero):Entero;
-Funcion FacIter(n:Entero):Entero;
-Procedimiento LeeVec(k:Entero);
-Procedimiento LeeMat(K:Entero);
-Procedimiento OrdVec(k:Entero);
-Procedimiento ImpMat(K:Entero);
-Procedimiento MulMat(k, v:Entero);
+Funcion FacRec(n:Entero):Entero
+Inicio
+FindeFuncion;
+
+Funcion FacIter():Entero
+variables r, s, t:real;
+          Alfa, Beta:Alfabetico;
+Inicio
+FindeFuncion;

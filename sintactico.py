@@ -20,7 +20,7 @@ class sintactico:
     def start_sintactic(self, lexer):
         def p_Prgrm(p):
             '''
-            Prgrm : variables FuncProc
+            Prgrm : constantes variables FuncProc
                   | variables
                   | Block
             '''
@@ -46,16 +46,21 @@ class sintactico:
 
         def p_FuncProc(p):
             '''
-            FuncProc : Func Proc
+            FuncProc : Func 
+                     | Proc
+                     | Func FuncProc
+                     | Proc FuncProc
             '''
             p[0] = self.join_result(p)
 
         def p_Func(p):
             '''
-            Func : FUNCION ID LPARENTHESIS Params RPARENTHESIS 2DOTS TIPO DOTCOMMA
-                 | FUNCION ID LPARENTHESIS RPARENTHESIS 2DOTS TIPO DOTCOMMA
-                 | FUNCION ID LPARENTHESIS Params RPARENTHESIS 2DOTS TIPO DOTCOMMA Func
-                 | FUNCION ID LPARENTHESIS RPARENTHESIS 2DOTS TIPO DOTCOMMA Func
+            Func : FUNCION ID LPARENTHESIS RPARENTHESIS 2DOTS TIPO INICIO FINDEFUNCION DOTCOMMA
+                 | FUNCION ID LPARENTHESIS RPARENTHESIS 2DOTS TIPO INICIO FINDEFUNCION DOTCOMMA Func
+                 | FUNCION ID LPARENTHESIS Params RPARENTHESIS 2DOTS TIPO INICIO FINDEFUNCION DOTCOMMA
+                 | FUNCION ID LPARENTHESIS Params RPARENTHESIS 2DOTS TIPO INICIO FINDEFUNCION DOTCOMMA Func
+                 | FUNCION ID LPARENTHESIS RPARENTHESIS 2DOTS TIPO variables INICIO FINDEFUNCION DOTCOMMA
+                 | FUNCION ID LPARENTHESIS RPARENTHESIS 2DOTS TIPO variables INICIO FINDEFUNCION DOTCOMMA Func
             '''
             p[0] = self.join_result(p)
 
@@ -88,6 +93,19 @@ class sintactico:
             '''
             p[0] = self.join_result(p)
 
+        def p_constantes(p):
+            '''
+            constantes : CONSTANTES GpoConst
+            '''
+            p[0] = self.join_result(p)
+
+        def p_gpoConst(p):
+            '''
+            GpoConst : GpoIds DOTCOMMA GpoConst
+                     | GpoIds DOTCOMMA
+            '''
+            p[0] = self.join_result(p)
+
         def p_variables(p):
             '''
             variables : VARIABLES GpoVars
@@ -100,6 +118,13 @@ class sintactico:
                     | GpoIds 2DOTS TIPO DOTCOMMA
             '''
             p[0] = self.join_result(p)
+
+        def p_grupoVars_error(p):
+            '''
+            GpoVars : GpoIds 2DOTS error DOTCOMMA GpoVars
+                    | GpoIds 2DOTS error DOTCOMMA
+            '''
+            print("Syntax error in print statement. Bad expression")
 
         def p_grupoIds(p):
             '''
@@ -139,8 +164,10 @@ class sintactico:
             pass
 
         def p_error(p):
-            print(p)
-            print("Syntax error in input!")
+            if p:
+                print("Syntax error in input!", p.type, p)
+            else:
+                print('End of file reached')
 
         parser = yacc.yacc()
         s = self.input
