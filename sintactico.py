@@ -20,30 +20,41 @@ class sintactico:
     def start_sintactic(self, lexer):
         def p_Prgrm(p):
             '''
-            Prgrm : constantes variables FuncProc
+            Prgrm : constantes variables FuncProc PROGRAMA Block FIN DE PROGRAMA
             '''
             p[0] = self.join_result(p)
 
+        def p_Prgrm_error_Programa(p):
+            '''
+            Prgrm : constantes variables FuncProc error Block FIN DE PROGRAMA
+            '''
+            print("Mala sintaxis es neceario poner Programa")
+
+        def p_Prgrm_error_Fin(p):
+            '''
+            Prgrm : constantes variables FuncProc PROGRAMA Block error DE PROGRAMA
+                  | constantes variables FuncProc PROGRAMA Block FIN error PROGRAMA
+                  | constantes variables FuncProc PROGRAMA Block FIN DE error
+            '''
+            print("Mala sintaxis es neceario poner Fin de Programa")
+
         def p_FuncProc(p):
             '''
-            FuncProc : Func
-                     | Proc
-                     | Func FuncProc
+            FuncProc : Func FuncProc
                      | Proc FuncProc
+                     |
             '''
             p[0] = self.join_result(p)
 
         def p_Proc(p):
             '''
-            Proc : PROCEDIMIENTO ID LPARENTHESIS Params RPARENTHESIS variables INICIO FIN DE PROCEDIMIENTO DOTCOMMA
-                 | PROCEDIMIENTO ID LPARENTHESIS Params RPARENTHESIS variables INICIO FIN DE PROCEDIMIENTO DOTCOMMA Proc
+            Proc : PROCEDIMIENTO ID LPARENTHESIS Params RPARENTHESIS variables INICIO Block FIN DE PROCEDIMIENTO DOTCOMMA
             '''
             p[0] = self.join_result(p)
 
         def p_Func(p):
             '''
             Func : FUNCION ID LPARENTHESIS Params RPARENTHESIS 2DOTS TIPO variables INICIO Block FIN DE FUNCION DOTCOMMA
-                 | FUNCION ID LPARENTHESIS Params RPARENTHESIS 2DOTS TIPO variables INICIO Block FIN DE FUNCION DOTCOMMA Func
             '''
             p[0] = self.join_result(p)
 
@@ -64,6 +75,54 @@ class sintactico:
                      | Repetir
                      | Mientras
                      | Cuando
+                     | Regresa
+                     | Asigna
+                     | Lproc
+                     | Imprime
+                     | Imprimenl
+                     | Lee
+            '''
+            p[0] = self.join_result(p)
+
+        def p_Lee(p):
+            '''
+            Lee : LEE LPARENTHESIS RPARENTHESIS
+                | LEE LPARENTHESIS ID RPARENTHESIS
+            '''
+            p[0] = self.join_result(p)
+
+        def p_Imprimenl(p):
+            '''
+            Imprimenl : IMPRIMENL LPARENTHESIS RPARENTHESIS
+                      | IMPRIMENL LPARENTHESIS GpoExp RPARENTHESIS
+            '''
+            p[0] = self.join_result(p)
+
+        def p_Imprime(p):
+            '''
+            Imprime : IMPRIME LPARENTHESIS RPARENTHESIS
+                    | IMPRIME LPARENTHESIS GpoExp RPARENTHESIS
+            '''
+            p[0] = self.join_result(p)
+
+        def p_GpoExp(p):
+            '''
+            GpoExp : Exprlog
+                   | Exprlog COMMA GpoExp
+            '''
+            p[0] = self.join_result(p)
+
+        def p_Lproc(p):
+            '''
+            Lproc : ID LPARENTHESIS Uparams RPARENTHESIS
+                  | ID LPARENTHESIS RPARENTHESIS
+            '''
+            p[0] = self.join_result(p)
+
+        def p_Regresa(p):
+            '''
+            Regresa : REGRESA
+                    | REGRESA LPARENTHESIS Exprlog RPARENTHESIS
             '''
             p[0] = self.join_result(p)
 
@@ -239,6 +298,7 @@ class sintactico:
         def p_constantes(p):
             '''
             constantes : CONSTANTES GpoConst
+                       |
             '''
             p[0] = self.join_result(p)
 

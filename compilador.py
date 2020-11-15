@@ -1,7 +1,7 @@
 from sintactico import sintactico
 from lexico import lexico
 
-file_name = "example1"
+file_name = "examen"
 file = open("{}.up".format(file_name), "r")
 
 lex_file = open("{}.lex".format(file_name), "w")
