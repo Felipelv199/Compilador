@@ -34,13 +34,13 @@ class sintactico:
 
         def p_Estatuto(p):
             '''
-            Estatuto : SiEst
+            Estatuto : Si
             '''
             p[0] = self.join_result(p)
 
         def p_SiEst(p):
             '''
-            SiEst : SI LPARENTHESIS RPARENTHESIS HACER
+            Si : SI LPARENTHESIS RPARENTHESIS HACER
             '''
             p[0] = self.join_result(p)
 
@@ -53,30 +53,25 @@ class sintactico:
             '''
             p[0] = self.join_result(p)
 
-        def p_Func(p):
+        def p_Proc(p):
             '''
-            Func : FUNCION ID LPARENTHESIS RPARENTHESIS 2DOTS TIPO INICIO FINDEFUNCION DOTCOMMA
-                 | FUNCION ID LPARENTHESIS RPARENTHESIS 2DOTS TIPO INICIO FINDEFUNCION DOTCOMMA Func
-                 | FUNCION ID LPARENTHESIS Params RPARENTHESIS 2DOTS TIPO INICIO FINDEFUNCION DOTCOMMA
-                 | FUNCION ID LPARENTHESIS Params RPARENTHESIS 2DOTS TIPO INICIO FINDEFUNCION DOTCOMMA Func
-                 | FUNCION ID LPARENTHESIS RPARENTHESIS 2DOTS TIPO variables INICIO FINDEFUNCION DOTCOMMA
-                 | FUNCION ID LPARENTHESIS RPARENTHESIS 2DOTS TIPO variables INICIO FINDEFUNCION DOTCOMMA Func
+            Proc : PROCEDIMIENTO ID LPARENTHESIS Params RPARENTHESIS variables INICIO FINDEPROCEDIMIENTO DOTCOMMA
+                 | PROCEDIMIENTO ID LPARENTHESIS Params RPARENTHESIS variables INICIO FINDEPROCEDIMIENTO DOTCOMMA Proc
             '''
             p[0] = self.join_result(p)
 
-        def p_Proc(p):
+        def p_Func(p):
             '''
-            Proc : PROCEDIMIENTO ID LPARENTHESIS Params RPARENTHESIS DOTCOMMA
-                 | PROCEDIMIENTO ID LPARENTHESIS RPARENTHESIS DOTCOMMA
-                 | PROCEDIMIENTO ID LPARENTHESIS Params RPARENTHESIS DOTCOMMA Proc
-                 | PROCEDIMIENTO ID LPARENTHESIS RPARENTHESIS DOTCOMMA Proc
+            Func : FUNCION ID LPARENTHESIS Params RPARENTHESIS 2DOTS TIPO variables INICIO FINDEFUNCION DOTCOMMA
+                 | FUNCION ID LPARENTHESIS Params RPARENTHESIS 2DOTS TIPO variables INICIO FINDEFUNCION DOTCOMMA Func
             '''
             p[0] = self.join_result(p)
 
         def p_Params(p):
             '''
             Params : GpoPars 2DOTS TIPO
-                   | GpoPars 2DOTS TIPO Params
+                   | Params
+                   |
             '''
             p[0] = self.join_result(p)
 
@@ -109,6 +104,7 @@ class sintactico:
         def p_variables(p):
             '''
             variables : VARIABLES GpoVars
+                      |
             '''
             p[0] = self.join_result(p)
 
@@ -158,10 +154,6 @@ class sintactico:
                    | LBRACKET CteEnt RBRACKET LBRACKET CteEnt RBRACKET
             '''
             p[0] = self.join_result(p)
-
-        def p_empty(p):
-            'empty :'
-            pass
 
         def p_error(p):
             if p:
