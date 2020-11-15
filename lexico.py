@@ -27,12 +27,10 @@ PalRes = {
     "logico": "LOGICO",
     "entero": "ENTERO",
     "funcion": "FUNCION",
-    "findefuncion": "FINDEFUNCION",
     "inicio": "INICIO",
     "fin": "FIN",
     "de": "DE",
     "procedimiento": "PROCEDIMIENTO",
-    "findeprocedimiento": "FINDEPROCEDIMIENTO",
     "regresa": "REGRESA",
     "si": "SI",
     "hacer": "HACER",
@@ -56,7 +54,6 @@ PalRes = {
     "imprime": "IMPRIME",
     "imprimenl": "IMPRIMENL",
     "programa": "PROGRAMA",
-    "findeprograma": "FINDEPROGRAMA",
     'limpiaPantalla': 'LIMPIAPANTALLA',
     'limpiar': 'LIMPIAR',
     '.': 'DOT',
@@ -110,11 +107,6 @@ class lexico:
             error_lineno, error, error_description, error_line))
 
     def start_lexico(self):
-        def t_OpLog(t):
-            r'y|(no)|o'
-            self.file_lex.write("{:<40}|<{}>\n".format(t.value, t.type))
-            t.type = PalRes[t.value]
-            return t
 
         def t_OpRel(t):
             r'=|(<>)|<|>|(<=)|(>=)'
@@ -167,6 +159,12 @@ class lexico:
                         t, '<lexico>Palabra reservada mal escrita, quisiste decir {}'.format(palabra))
                     return
             self.file_lex.write("{:<40}|<{}>\n".format(t.value, t.type))
+            return t
+
+        def t_OpLog(t):
+            r'y|(no)|o'
+            self.file_lex.write("{:<40}|<{}>\n".format(t.value, t.type))
+            t.type = PalRes[t.value]
             return t
 
         def t_CteRealError(t):

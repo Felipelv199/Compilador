@@ -35,15 +35,15 @@ class sintactico:
 
         def p_Proc(p):
             '''
-            Proc : PROCEDIMIENTO ID LPARENTHESIS Params RPARENTHESIS variables INICIO FINDEPROCEDIMIENTO DOTCOMMA
-                 | PROCEDIMIENTO ID LPARENTHESIS Params RPARENTHESIS variables INICIO FINDEPROCEDIMIENTO DOTCOMMA Proc
+            Proc : PROCEDIMIENTO ID LPARENTHESIS Params RPARENTHESIS variables INICIO FIN DE PROCEDIMIENTO DOTCOMMA
+                 | PROCEDIMIENTO ID LPARENTHESIS Params RPARENTHESIS variables INICIO FIN DE PROCEDIMIENTO DOTCOMMA Proc
             '''
             p[0] = self.join_result(p)
 
         def p_Func(p):
             '''
-            Func : FUNCION ID LPARENTHESIS Params RPARENTHESIS 2DOTS TIPO variables INICIO Block FINDEFUNCION DOTCOMMA
-                 | FUNCION ID LPARENTHESIS Params RPARENTHESIS 2DOTS TIPO variables INICIO Block FINDEFUNCION DOTCOMMA Func
+            Func : FUNCION ID LPARENTHESIS Params RPARENTHESIS 2DOTS TIPO variables INICIO Block FIN DE FUNCION DOTCOMMA
+                 | FUNCION ID LPARENTHESIS Params RPARENTHESIS 2DOTS TIPO variables INICIO Block FIN DE FUNCION DOTCOMMA Func
             '''
             p[0] = self.join_result(p)
 
@@ -65,21 +65,30 @@ class sintactico:
 
         def p_Si(p):
             '''
-            Si : SI LPARENTHESIS Exprlog RPARENTHESIS HACER
+            Si : SI LPARENTHESIS Exprlog RPARENTHESIS HACER BckEsp
+               | SI LPARENTHESIS Exprlog RPARENTHESIS HACER BckEsp SINO BckEsp
+            '''
+            p[0] = self.join_result(p)
+
+        def p_BckEsp(p):
+            '''
+            BckEsp : Estatuto
+                   | INICIO Block FIN
+                   |
             '''
             p[0] = self.join_result(p)
 
         def p_Exprlog(p):
             '''
             Exprlog : Opy
-                    | O Exprlog
+                    | Opy O Exprlog
             '''
             p[0] = self.join_result(p)
 
         def p_Opy(p):
             '''
             Opy : Opno
-                | Y Opy
+                | Opno Y Opy
             '''
             p[0] = self.join_result(p)
 
@@ -93,7 +102,7 @@ class sintactico:
         def p_Oprel(p):
             '''
             Oprel : Expr
-                  | OpRel Oprel
+                  | Expr OpRel Oprel
             '''
             p[0] = self.join_result(p)
 
@@ -130,14 +139,42 @@ class sintactico:
 
         def p_Termino(p):
             '''
-            Termino :
+            Termino : ID
+                    | ID Lfunc
+                    | ID Udim
+                    | LPARENTHESIS Exprlog RPARENTHESIS
+                    | CteEnt
+                    | CteReal
+                    | CteAlfa
+                    | CteLog
+            '''
+            p[0] = self.join_result(p)
+
+        def p_Lfunc(p):
+            '''
+            Lfunc : ID LPARENTHESIS Uparams RPARENTHESIS
+                  | ID LPARENTHESIS RPARENTHESIS
+            '''
+            p[0] = self.join_result(p)
+
+        def p_Udim(p):
+            '''
+            Udim : Expr Udim
+                 | Expr
+            '''
+            p[0] = self.join_result(p)
+
+        def p_Uparams(p):
+            '''
+            Uparams : Exprlog
+                    | Exprlog COMMA Uparams
             '''
             p[0] = self.join_result(p)
 
         def p_Params(p):
             '''
             Params : GpoPars 2DOTS TIPO Params
-                   |
+                   | 
             '''
             p[0] = self.join_result(p)
 

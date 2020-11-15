@@ -15,13 +15,18 @@ variables i, j, k, n, vector[MAX], matriz[MAX][MAX]:Entero;
 
 Funcion FacRec(n:Entero):Entero
 Inicio
-FindeFuncion;
+Fin de Funcion;
 
 Funcion FacIter():Entero
 variables r, s, t:real;
           Alfa, Beta:Alfabetico;
 Inicio
-interrumpe;
-conTinua;
-Si (opc=1) hacer
-FindeFuncion;
+ Si (n < 2) hacer 
+      limpiar
+  sino
+    interrumpe;
+
+  Si (opc=1) hacer
+    limpiar;
+    
+Fin de Funcion;
