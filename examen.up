@@ -1,17 +1,47 @@
 constantes PI:=3.141592;
-           MAX:=30;
+	   MAX:=30;
 
 variables i, j, k, n, vector[MAX], matriz[MAX][MAX]:Entero;
           r, s, t:real;
           Alfa, Beta:Alfabetico;
           Log1, Log2:Logico;
-          a[5]:logico;
-        c[6][8],a[MAX]:real;
-        e:="Hola que hace",c:=0:real;
-        f:=falso:logico;
-        h,b:entero;
-        r:=5, s:=8, t:=9,c:real;
-        vector[MAX], matriz[MAX][MAX]:Entero;
 
-PROGRAMA
-FIN DE PROGRAMA
+Procedimiento Selecciona()
+Inicio
+   Repetir
+      Imprime("Dame un numero: ");
+      lee(n);
+      Imprime("Factorial R]recursivo I]interactivo S]salir: ");
+      Lee(opc);
+      Cuando el valor de opc 
+      Inicio
+         Sea "R", "r": imprimenl("Factorial Recursivo de ", n, " es= ", FacRec(n))
+         Sea "I", "i": imprimenl("Factorial Iterativo de ", n, " es= ", Faciter(n))
+         CUALQUIER Otro: Si (opc <> "S" y opc <> "s") hacer 
+                  Imprimenl("Opcion Invalida!!!")
+      Fin;
+   hasta que (opc = "S" o opc = "s");
+Fin de Procedimiento;
+
+Funcion FacRec(n:entero):Entero
+Inicio
+   Si (n < 2) hacer 
+      regresa(1)
+   sino
+      regresa(FacRec(n-1)*n);
+Fin de Funcion;
+
+Programa
+   limpia;
+   Selecciona();
+   Imprime("Dame Radio = ");Lee(r);
+   Imprime("Dame Altura= ");Lee(s);
+   Imprimenl("El Volum del Cilindro= ", VolCil(r, s);
+   Imprimenl("Es el radio= ", r, " mayor que Altura= ", s, " ? ", Compara(r, s, 2));
+   LeeVecmat();
+   Imprime("Dame tu nombre: ");
+   Lee(alfa);
+   Imprime("Dame tu Apellido: ");
+   Lee(beta);
+   Imprimenl("Hola ", Concat(alfa, beta), " ya la pasaste!!!");
+Fin de programa.
