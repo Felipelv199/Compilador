@@ -60,6 +60,20 @@ class sintactico:
                      | INTERRUMPE
                      | CONTINUA
                      | Si
+                     | Desde
+            '''
+            p[0] = self.join_result(p)
+
+        def p_Desde(p):
+            '''
+            Desde : DESDE EL VALOR DE Asigna HASTA Expr BckEsp
+            '''
+            p[0] = self.join_result(p)
+
+        def p_Asigna(p):
+            '''
+            Asigna : ID OpAsig Exprlog
+                   | ID Udim OpAsig Exprlog
             '''
             p[0] = self.join_result(p)
 
