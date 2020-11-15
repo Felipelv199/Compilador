@@ -21,32 +21,12 @@ class sintactico:
         def p_Prgrm(p):
             '''
             Prgrm : constantes variables FuncProc
-                  | variables
-                  | Block
-            '''
-            p[0] = self.join_result(p)
-
-        def p_Block(p):
-            '''
-            Block : Estatuto DOTCOMMA
-            '''
-            p[0] = self.join_result(p)
-
-        def p_Estatuto(p):
-            '''
-            Estatuto : Si
-            '''
-            p[0] = self.join_result(p)
-
-        def p_SiEst(p):
-            '''
-            Si : SI LPARENTHESIS RPARENTHESIS HACER
             '''
             p[0] = self.join_result(p)
 
         def p_FuncProc(p):
             '''
-            FuncProc : Func 
+            FuncProc : Func
                      | Proc
                      | Func FuncProc
                      | Proc FuncProc
@@ -62,15 +42,101 @@ class sintactico:
 
         def p_Func(p):
             '''
-            Func : FUNCION ID LPARENTHESIS Params RPARENTHESIS 2DOTS TIPO variables INICIO FINDEFUNCION DOTCOMMA
-                 | FUNCION ID LPARENTHESIS Params RPARENTHESIS 2DOTS TIPO variables INICIO FINDEFUNCION DOTCOMMA Func
+            Func : FUNCION ID LPARENTHESIS Params RPARENTHESIS 2DOTS TIPO variables INICIO Block FINDEFUNCION DOTCOMMA
+                 | FUNCION ID LPARENTHESIS Params RPARENTHESIS 2DOTS TIPO variables INICIO Block FINDEFUNCION DOTCOMMA Func
+            '''
+            p[0] = self.join_result(p)
+
+        def p_Block(p):
+            '''
+            Block : Estatuto DOTCOMMA Block
+                  |
+            '''
+            p[0] = self.join_result(p)
+
+        def p_Estatuto(p):
+            '''
+            Estatuto : LIMPIAR
+                     | INTERRUMPE
+                     | CONTINUA
+                     | Si
+            '''
+            p[0] = self.join_result(p)
+
+        def p_Si(p):
+            '''
+            Si : SI LPARENTHESIS Exprlog RPARENTHESIS HACER
+            '''
+            p[0] = self.join_result(p)
+
+        def p_Exprlog(p):
+            '''
+            Exprlog : Opy
+                    | O Exprlog
+            '''
+            p[0] = self.join_result(p)
+
+        def p_Opy(p):
+            '''
+            Opy : Opno
+                | Y Opy
+            '''
+            p[0] = self.join_result(p)
+
+        def p_Opno(p):
+            '''
+            Opno : Oprel
+                 | NO Oprel
+            '''
+            p[0] = self.join_result(p)
+
+        def p_Oprel(p):
+            '''
+            Oprel : Expr
+                  | OpRel Oprel
+            '''
+            p[0] = self.join_result(p)
+
+        def p_Expr(p):
+            '''
+            Expr : Multi
+                 | Multi PLUS Expr
+                 | Multi MINUS Expr
+            '''
+            p[0] = self.join_result(p)
+
+        def p_Multi(p):
+            '''
+            Multi : Expo ADD Multi
+                  | Expo DIVIDE Multi
+                  | Expo PERCENTAGE Multi
+                  | Expo
+            '''
+            p[0] = self.join_result(p)
+
+        def p_Expo(p):
+            '''
+            Expo : Signo
+                 | Signo POW Expo
+            '''
+            p[0] = self.join_result(p)
+
+        def p_Signo(p):
+            '''
+            Signo : MINUS Termino
+                  | Termino
+            '''
+            p[0] = self.join_result(p)
+
+        def p_Termino(p):
+            '''
+            Termino :
             '''
             p[0] = self.join_result(p)
 
         def p_Params(p):
             '''
-            Params : GpoPars 2DOTS TIPO
-                   | Params
+            Params : GpoPars 2DOTS TIPO Params
                    |
             '''
             p[0] = self.join_result(p)
@@ -125,33 +191,33 @@ class sintactico:
         def p_grupoIds(p):
             '''
             GpoIds : GpoId
-                   | GpoPar
-                   | GpoId COMMA GpoIds
-                   | GpoPar COMMA GpoIds
+                | GpoPar
+                | GpoId COMMA GpoIds
+                | GpoPar COMMA GpoIds
             '''
             p[0] = self.join_result(p)
 
         def p_grupoId(p):
             '''
             GpoId : ID OpAsig CteEnt
-                  | ID OpAsig CteReal
-                  | ID OpAsig CteAlfa
-                  | ID OpAsig CteLog
-                  | ID Dimens
+                | ID OpAsig CteReal
+                | ID OpAsig CteAlfa
+                | ID OpAsig CteLog
+                | ID Dimens
             '''
             p[0] = self.join_result(p)
 
         def p_Dimens_1D(p):
             '''
             Dimens : LBRACKET ID RBRACKET
-                   | LBRACKET CteEnt RBRACKET
+                | LBRACKET CteEnt RBRACKET
             '''
             p[0] = self.join_result(p)
 
         def p_Dimens_2D(p):
             '''
             Dimens : LBRACKET ID RBRACKET LBRACKET ID RBRACKET
-                   | LBRACKET CteEnt RBRACKET LBRACKET CteEnt RBRACKET
+                | LBRACKET CteEnt RBRACKET LBRACKET CteEnt RBRACKET
             '''
             p[0] = self.join_result(p)
 

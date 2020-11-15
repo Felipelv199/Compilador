@@ -21,4 +21,7 @@ Funcion FacIter():Entero
 variables r, s, t:real;
           Alfa, Beta:Alfabetico;
 Inicio
+interrumpe;
+conTinua;
+Si (opc=1) hacer
 FindeFuncion;

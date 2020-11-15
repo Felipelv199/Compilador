@@ -58,6 +58,7 @@ PalRes = {
     "programa": "PROGRAMA",
     "findeprograma": "FINDEPROGRAMA",
     'limpiaPantalla': 'LIMPIAPANTALLA',
+    'limpiar': 'LIMPIAR',
     '.': 'DOT',
     ",": "COMMA",
     ":": "2DOTS",
@@ -70,8 +71,13 @@ PalRes = {
     "-": "MINUS",
     "*": "ADD",
     "/": "DIVIDE",
+    "%": "PERCENTAGE",
+    "^": "POW",
     "tipo": "TIPO",
-    "salto": "SALTO"
+    "salto": "SALTO",
+    "o": "O",
+    "y": "Y",
+    "no": "NO"
 }
 
 tokens += PalRes.values()
@@ -107,6 +113,7 @@ class lexico:
         def t_OpLog(t):
             r'y|(no)|o'
             self.file_lex.write("{:<40}|<{}>\n".format(t.value, t.type))
+            t.type = PalRes[t.value]
             return t
 
         def t_OpRel(t):
@@ -115,7 +122,7 @@ class lexico:
             return t
 
         def t_OpArit(t):
-            r'[+-]|[/]|[*]'
+            r'[+-]|[/]|[*]|[%]|\^'
             self.file_lex.write("{:<40}|<{}>\n".format(t.value, t.type))
             t.type = PalRes[t.value]
             return t
