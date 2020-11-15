@@ -31,6 +31,7 @@ PalRes = {
     "fin": "FIN",
     "de": "DE",
     "procedimiento": "PROCEDIMIENTO",
+    "cualquier": "CUALQUIER",
     "regresa": "REGRESA",
     "si": "SI",
     "hacer": "HACER",

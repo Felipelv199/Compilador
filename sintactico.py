@@ -61,12 +61,43 @@ class sintactico:
                      | CONTINUA
                      | Si
                      | Desde
+                     | Repetir
+                     | Mientras
+                     | Cuando
+            '''
+            p[0] = self.join_result(p)
+
+        def p_Cuando(p):
+            '''
+            Cuando : CUANDO EL VALOR DE ID INICIO GpoSea FIN
+                   | CUANDO EL VALOR DE ID INICIO GpoSea CUALQUIER OTRO 2DOTS BckEsp FIN
+            '''
+            p[0] = self.join_result(p)
+
+        def p_GpoSea(p):
+            '''
+            GpoSea : SEA GpoConst 2DOTS BckEsp GpoSea
+                   |
+            '''
+            p[0] = self.join_result(p)
+
+        def p_Mientras(p):
+            '''
+            Mientras : MIENTRAS SE CUMPLA QUE LPARENTHESIS Exprlog RPARENTHESIS BckEsp
+            '''
+            p[0] = self.join_result(p)
+
+        def p_Repetir(p):
+            '''
+            Repetir : REPETIR Block HASTA QUE LPARENTHESIS Exprlog RPARENTHESIS
             '''
             p[0] = self.join_result(p)
 
         def p_Desde(p):
             '''
             Desde : DESDE EL VALOR DE Asigna HASTA Expr BckEsp
+                  | DESDE EL VALOR DE Asigna HASTA Expr INCR CteEnt BckEsp
+                  | DESDE EL VALOR DE Asigna HASTA Expr DECR CteEnt BckEsp
             '''
             p[0] = self.join_result(p)
 
@@ -214,7 +245,7 @@ class sintactico:
         def p_gpoConst(p):
             '''
             GpoConst : GpoIds DOTCOMMA GpoConst
-                     | GpoIds DOTCOMMA
+                     |
             '''
             p[0] = self.join_result(p)
 
