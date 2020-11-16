@@ -31,14 +31,39 @@ Inicio
       regresa(FacRec(n-1)*n);
 Fin de Funcion;
 
+Funcion VolCil(radio, altura: Real):Real
+Inicio
+   Regresa(PI*radio^2*altura);
+Fin de Funcion;
+
+Funcion FacIter(n:Entero):Entero
+Variables Facto:Entero;
+Inicio
+  Facto:=1;
+  Desde el valor de i:=n hasta 2 decr 1 
+     Facto:=Facto*i;
+Fin de Funcion;
+
+Funcion Concat(a, b:alfabetico):Alfabetico
+Inicio
+   regresa(a + " " + b);
+Fin de Funcion;
+
+Procedimiento LeeVecMat()
+Inicio
+   Imprime("Dame elementos de Vector( N ) o Grado de Matriz( NxN ): ");
+   MulMat(n, val);
+   ImpMat(n);
+Fin de Procedimiento;
+
 Programa
-   limpia;
+   limpiar;
    Selecciona();
    Imprime("Dame Radio = ");Lee(r);
    Imprime("Dame Altura= ");Lee(s);
-   Imprimenl("El Volum del Cilindro= ", VolCil(r, s);
-   Imprimenl("Es el radio= ", r, " mayor que Altura= ", s, " ? ", Compara(r, s, 2));
-   LeeVecmat();
+   Imprimenl("El Volum del Cilindro= ", VolCil(r, s));
+   Imprimenl("Es el radio= ", r, " mayor que Altura= ", s, " ? ", Compara(r));
+   LeeVecmat(a);
    Imprime("Dame tu nombre: ");
    Lee(alfa);
    Imprime("Dame tu Apellido: ");

@@ -1,3 +1,4 @@
+import re
 import ply.yacc as yacc
 from lexico import tokens
 
@@ -12,7 +13,8 @@ class sintactico:
             '', '', error_description, ''))
 
     def print_sintactic_error(self, p, error_description):
-        print('ERROR: {} | {}'.format(p.lexer.lineno, error_description))
+        print('ERROR: {} | {}'.format(
+            p.lexer.lineno, error_description))
 
     def join_result(self, p):
         s = ''
@@ -26,22 +28,6 @@ class sintactico:
             Prgrm : constantes variables FuncProc PROGRAMA Block FIN DE PROGRAMA DOT
             '''
             p[0] = self.join_result(p)
-
-        def p_Prgrm_error_Programa(p):
-            '''
-            Prgrm : constantes variables FuncProc error Block FIN DE PROGRAMA DOT
-            '''
-            self.print_sintactic_error(
-                p, 'Mala sintaxis es neceario escribir Programa')
-
-        def p_Prgrm_error_Fin(p):
-            '''
-            Prgrm : constantes variables FuncProc PROGRAMA Block error DE PROGRAMA DOT
-                  | constantes variables FuncProc PROGRAMA Block FIN error PROGRAMA DOT
-                  | constantes variables FuncProc PROGRAMA Block FIN DE error DOT
-            '''
-            self.print_sintactic_error(
-                p, 'Mala sintaxis es neceario escribir Fin de Programa')
 
         def p_FuncProc(p):
             '''
@@ -57,55 +43,19 @@ class sintactico:
             '''
             p[0] = self.join_result(p)
 
-        def p_Proc_error(p):
-            '''
-            Proc : error ID LPARENTHESIS Params RPARENTHESIS variables INICIO Block FIN DE PROCEDIMIENTO DOTCOMMA
-                 | PROCEDIMIENTO error LPARENTHESIS Params RPARENTHESIS variables INICIO Block FIN DE PROCEDIMIENTO DOTCOMMA
-                 | PROCEDIMIENTO ID error Params RPARENTHESIS variables INICIO Block FIN DE PROCEDIMIENTO DOTCOMMA
-                 | PROCEDIMIENTO ID LPARENTHESIS Params error variables INICIO Block FIN DE PROCEDIMIENTO DOTCOMMA
-                 | PROCEDIMIENTO ID LPARENTHESIS Params RPARENTHESIS variables error Block FIN DE PROCEDIMIENTO DOTCOMMA
-                 | PROCEDIMIENTO ID LPARENTHESIS Params RPARENTHESIS variables INICIO Block error DE PROCEDIMIENTO DOTCOMMA
-                 | PROCEDIMIENTO ID LPARENTHESIS Params RPARENTHESIS variables INICIO Block INICIO error PROCEDIMIENTO DOTCOMMA
-                 | PROCEDIMIENTO ID LPARENTHESIS Params RPARENTHESIS variables INICIO Block INICIO DE error DOTCOMMA
-                 | PROCEDIMIENTO ID LPARENTHESIS Params RPARENTHESIS variables INICIO Block INICIO DE PROCEDIMIENTO error
-            '''
-            self.print_sintactic_error(p, 'Error de sintaxis en procedimiento')
-
         def p_Func(p):
             '''
             Func : FUNCION ID LPARENTHESIS Params RPARENTHESIS 2DOTS TIPO variables INICIO Block FIN DE FUNCION DOTCOMMA
             '''
             p[0] = self.join_result(p)
 
-        def p_Func_error(p):
-            '''
-            Func : error ID LPARENTHESIS Params RPARENTHESIS 2DOTS TIPO variables INICIO Block FIN DE FUNCION DOTCOMMA
-                 | FUNCION error LPARENTHESIS Params RPARENTHESIS 2DOTS TIPO variables INICIO Block FIN DE FUNCION DOTCOMMA
-                 | FUNCION ID error Params RPARENTHESIS 2DOTS TIPO variables INICIO Block FIN DE FUNCION DOTCOMMA
-                 | FUNCION ID LPARENTHESIS Params error 2DOTS TIPO variables INICIO Block FIN DE FUNCION DOTCOMMA
-                 | FUNCION ID LPARENTHESIS Params RPARENTHESIS error TIPO variables INICIO Block FIN DE FUNCION DOTCOMMA
-                 | FUNCION ID LPARENTHESIS Params RPARENTHESIS 2DOTS error variables INICIO Block FIN DE FUNCION DOTCOMMA
-                 | FUNCION ID LPARENTHESIS Params RPARENTHESIS 2DOTS TIPO variables error Block FIN DE FUNCION DOTCOMMA
-                 | FUNCION ID LPARENTHESIS Params RPARENTHESIS 2DOTS TIPO variables INICIO Block error DE FUNCION DOTCOMMA
-                 | FUNCION ID LPARENTHESIS Params RPARENTHESIS 2DOTS TIPO variables INICIO Block FIN error FUNCION DOTCOMMA
-                 | FUNCION ID LPARENTHESIS Params RPARENTHESIS 2DOTS TIPO variables INICIO Block FIN DE error DOTCOMMA
-                 | FUNCION ID LPARENTHESIS Params RPARENTHESIS 2DOTS TIPO variables INICIO Block FIN DE FUNCION error
-            '''
-            self.print_sintactic_error(p, 'Error de sintaxis en funcion')
-
         def p_Block(p):
             '''
             Block : Estatuto DOTCOMMA Block
+                  | DOTCOMMA Block
                   |
             '''
             p[0] = self.join_result(p)
-
-        def p_Block_error(p):
-            '''
-            Block : Estatuto error Block
-            '''
-            self.print_sintactic_error(
-                p, 'Es necesario poner punto y coma cuando terminas un bloque')
 
         def p_Estatuto(p):
             '''
@@ -119,82 +69,48 @@ class sintactico:
                      | Cuando
                      | Regresa
                      | Asigna
-                     | Lproc
+                     | Lfunc
                      | Imprime
                      | Imprimenl
-                     | Lee
+                     | Leer
             '''
             p[0] = self.join_result(p)
 
         def p_Lee(p):
             '''
-            Lee : LEE LPARENTHESIS RPARENTHESIS
-                | LEE LPARENTHESIS ID RPARENTHESIS
+            Leer : LEE LPARENTHESIS RPARENTHESIS
+                 | LEE LPARENTHESIS ID RPARENTHESIS
             '''
             p[0] = self.join_result(p)
-
-        def p_Lee_error(p):
-            '''
-            Lee : error LPARENTHESIS RPARENTHESIS
-                | LEE error RPARENTHESIS
-                | LEE LPARENTHESIS error
-                | error LPARENTHESIS ID RPARENTHESIS
-                | LEE error ID RPARENTHESIS
-                | LEE LPARENTHESIS ID error
-            '''
-            self.print_sintactic_error(p, 'Sentencia lee mal escrita')
 
         def p_Imprimenl(p):
             '''
-            Imprimenl : IMPRIMENL LPARENTHESIS RPARENTHESIS
-                      | IMPRIMENL LPARENTHESIS GpoExp RPARENTHESIS
+            Imprimenl : IMPRIMENL LPARENTHESIS GpoExp RPARENTHESIS
             '''
             p[0] = self.join_result(p)
 
-        def p_Imprimenl_error(p):
+        def p_Imprimenl_error1(p):
             '''
-            Imprimenl : IMPRIMENL error RPARENTHESIS
-                      | IMPRIMENL LPARENTHESIS error
-                      | error LPARENTHESIS GpoExp RPARENTHESIS
-                      | IMPRIMENL error GpoExp RPARENTHESIS
-                      | IMPRIMENL LPARENTHESIS GpoExp error
+            Imprimenl : IMPRIMENL error GpoExp RPARENTHESIS
             '''
-            self.print_sintactic_error(p, 'Sentencia Imprimenl mal escrita')
+            self.print_sintactic_error(p, 'Falto "(" de apertura')
+
+        def p_Imprimenl_error2(p):
+            '''
+            Imprimenl : IMPRIMENL LPARENTHESIS GpoExp error
+            '''
+            self.print_sintactic_error(p, 'Falto ")" de cerradura')
 
         def p_Imprime(p):
             '''
-            Imprime : IMPRIME LPARENTHESIS RPARENTHESIS
-                    | IMPRIME LPARENTHESIS GpoExp RPARENTHESIS
+            Imprime : IMPRIME LPARENTHESIS GpoExp RPARENTHESIS
             '''
             p[0] = self.join_result(p)
-
-        def p_Imprime_error(p):
-            '''
-            Imprime : IMPRIME error RPARENTHESIS
-                    | IMPRIME LPARENTHESIS error
-                    | IMPRIME error GpoExp RPARENTHESIS
-                    | IMPRIME LPARENTHESIS GpoExp error
-            '''
-            self.print_sintactic_error(p, 'Sentencia Imprime mal escrita')
 
         def p_GpoExp(p):
             '''
             GpoExp : Exprlog
                    | Exprlog COMMA GpoExp
-            '''
-            p[0] = self.join_result(p)
-
-        def p_GpoExp_error(p):
-            '''
-            GpoExp : Exprlog error GpoExp
-            '''
-            self.print_sintactic_error(
-                p, 'Sentencia mal escrita es necesario poner ,')
-
-        def p_Lproc(p):
-            '''
-            Lproc : ID LPARENTHESIS Uparams RPARENTHESIS
-                  | ID LPARENTHESIS RPARENTHESIS
             '''
             p[0] = self.join_result(p)
 
@@ -323,7 +239,7 @@ class sintactico:
         def p_Termino(p):
             '''
             Termino : ID
-                    | ID Lfunc
+                    | Lfunc
                     | ID Udim
                     | LPARENTHESIS Exprlog RPARENTHESIS
                     | CteEnt
@@ -335,10 +251,22 @@ class sintactico:
 
         def p_Lfunc(p):
             '''
-            Lfunc : ID LPARENTHESIS Uparams RPARENTHESIS
-                  | ID LPARENTHESIS RPARENTHESIS
+            Lfunc : ID LPARENTHESIS Uparams RPARENTHESIS 
+                  | ID LPARENTHESIS empty RPARENTHESIS 
             '''
             p[0] = self.join_result(p)
+
+        def p_Lfunc_error1(p):
+            '''
+            Lfunc : ID error GpoExp RPARENTHESIS
+            '''
+            self.print_sintactic_error(p, 'Falto "(" de apertura')
+
+        def p_Lfunc_error2(p):
+            '''
+            Lfunc : ID LPARENTHESIS GpoExp error
+            '''
+            self.print_sintactic_error(p, 'Falto ")" de cerradura')
 
         def p_Udim(p):
             '''
@@ -357,7 +285,7 @@ class sintactico:
         def p_Params(p):
             '''
             Params : GpoPars 2DOTS TIPO Params
-                   | 
+                   |
             '''
             p[0] = self.join_result(p)
 
@@ -376,15 +304,25 @@ class sintactico:
 
         def p_constantes(p):
             '''
-            constantes : CONSTANTES GpoConst
+            constantes : CONSTANTES GpoIds DOTCOMMA constantes
+                       | GpoIds DOTCOMMA constantes
                        |
             '''
             p[0] = self.join_result(p)
 
         def p_gpoConst(p):
             '''
-            GpoConst : GpoIds DOTCOMMA GpoConst
-                     |
+            GpoConst : Cte
+                     | Cte COMMA GpoConst
+            '''
+            p[0] = self.join_result(p)
+
+        def p_Cte(p):
+            '''
+            Cte : CteEnt
+                | CteReal
+                | CteAlfa
+                | CteLog
             '''
             p[0] = self.join_result(p)
 
@@ -398,16 +336,9 @@ class sintactico:
         def p_grupoVars(p):
             '''
             GpoVars : GpoIds 2DOTS TIPO DOTCOMMA GpoVars
-                    | GpoIds 2DOTS TIPO DOTCOMMA
+                    |
             '''
             p[0] = self.join_result(p)
-
-        def p_grupoVars_error(p):
-            '''
-            GpoVars : GpoIds 2DOTS error DOTCOMMA GpoVars
-                    | GpoIds 2DOTS error DOTCOMMA
-            '''
-            print("Syntax error in print statement. Bad expression")
 
         def p_grupoIds(p):
             '''
@@ -442,9 +373,15 @@ class sintactico:
             '''
             p[0] = self.join_result(p)
 
+        def p_empty(p):
+            '''
+            empty :
+            '''
+
         def p_error(p):
             if not p:
-                print('End of file reached')
+                print('Fin del archivo')
+            print(p.type, p.value, p.lineno)
 
         parser = yacc.yacc()
         s = self.input
