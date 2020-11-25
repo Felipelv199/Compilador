@@ -43,19 +43,74 @@ class sintactico:
             '''
             p[0] = self.join_result(p)
 
+        def p_Proc_Error1(p):
+            '''
+            Proc : PROCEDIMIENTO ID error Params RPARENTHESIS variables INICIO Block FIN DE PROCEDIMIENTO DOTCOMMA
+            '''
+            self.print_sintactic_error(
+                p, 'Falto "(" de apertura en el procedimiento')
+
+        def p_Proc_Error2(p):
+            '''
+            Proc : PROCEDIMIENTO ID LPARENTHESIS Params error variables INICIO Block FIN DE PROCEDIMIENTO DOTCOMMA
+            '''
+            self.print_sintactic_error(
+                p, 'Falto ")" de cerradura en el procedimiento')
+
+        def p_Proc_Error3(p):
+            '''
+            Proc : PROCEDIMIENTO ID LPARENTHESIS Params RPARENTHESIS variables INICIO Block FIN DE PROCEDIMIENTO error
+            '''
+            self.print_sintactic_error(
+                p, 'Falto ";" al terminar el procedimiento')
+
         def p_Func(p):
             '''
             Func : FUNCION ID LPARENTHESIS Params RPARENTHESIS 2DOTS TIPO variables INICIO Block FIN DE FUNCION DOTCOMMA
             '''
             p[0] = self.join_result(p)
 
+        def p_Func_Error1(p):
+            '''
+            Func : FUNCION ID error Params RPARENTHESIS 2DOTS TIPO variables INICIO Block FIN DE FUNCION DOTCOMMA
+            '''
+            self.print_sintactic_error(
+                p, 'Falto "(" de apertura en la función')
+
+        def p_Func_Error2(p):
+            '''
+            Func : FUNCION ID LPARENTHESIS Params error 2DOTS TIPO variables INICIO Block FIN DE FUNCION DOTCOMMA
+            '''
+            self.print_sintactic_error(
+                p, 'Falto ")" de cerradura en la función')
+
+        def p_Func_Error3(p):
+            '''
+            Func : FUNCION ID LPARENTHESIS Params RPARENTHESIS error TIPO variables INICIO Block FIN DE FUNCION DOTCOMMA
+            '''
+            self.print_sintactic_error(
+                p, 'Falto ":" antes del tipo en la función')
+
+        def p_Func_Error4(p):
+            '''
+            Func : FUNCION ID LPARENTHESIS Params RPARENTHESIS 2DOTS TIPO variables INICIO Block FIN DE FUNCION error
+            '''
+            self.print_sintactic_error(
+                p, 'Falto ";" al finalizar la función')
+
         def p_Block(p):
             '''
             Block : Estatuto DOTCOMMA Block
-                  | DOTCOMMA Block
                   |
             '''
             p[0] = self.join_result(p)
+
+        def p_Block_Error1(p):
+            '''
+            Block : Estatuto error Block
+            '''
+            self.print_sintactic_error(
+                p, 'Falto ";" al terminar el bloque')
 
         def p_Estatuto(p):
             '''
@@ -68,18 +123,41 @@ class sintactico:
                      | Mientras
                      | Cuando
                      | Regresa
+                     | Lproc
                      | Asigna
-                     | Lfunc
                      | Imprime
                      | Imprimenl
                      | Leer
             '''
             p[0] = self.join_result(p)
 
+        def p_Lproc(p):
+            '''
+            Lproc : ID LPARENTHESIS Uparams RPARENTHESIS
+                  | ID LPARENTHESIS empty RPARENTHESIS
+            '''
+            p[0] = self.join_result(p)
+
+        def p_Lproc_Error1(p):
+            '''
+            Lproc : ID error Uparams RPARENTHESIS
+                  | ID error empty RPARENTHESIS
+            '''
+            self.print_sintactic_error(
+                p, 'Falto "(" de apertura en llamada a procedimiento')
+
+        def p_Lproc_Error2(p):
+            '''
+            Lproc : ID LPARENTHESIS Uparams error
+                  | ID LPARENTHESIS empty error
+            '''
+            self.print_sintactic_error(
+                p, 'Falto ")" de cerradura en llamada a procedimiento')
+
         def p_Lee(p):
             '''
-            Leer : LEE LPARENTHESIS RPARENTHESIS
-                 | LEE LPARENTHESIS ID RPARENTHESIS
+            Leer : LEE LPARENTHESIS ID RPARENTHESIS
+                 | LEE LPARENTHESIS ID Udim RPARENTHESIS
             '''
             p[0] = self.join_result(p)
 
@@ -116,10 +194,22 @@ class sintactico:
 
         def p_Regresa(p):
             '''
-            Regresa : REGRESA
-                    | REGRESA LPARENTHESIS Exprlog RPARENTHESIS
+            Regresa : REGRESA LPARENTHESIS Exprlog RPARENTHESIS
+                    | REGRESA
             '''
             p[0] = self.join_result(p)
+
+        def p_Regresa_Error1(p):
+            '''
+            Regresa : REGRESA error Exprlog RPARENTHESIS
+            '''
+            self.print_sintactic_error(p, 'Falto "(" de apertura en regresa')
+
+        def p_Regresa_Error2(p):
+            '''
+            Regresa : REGRESA LPARENTHESIS Exprlog error
+            '''
+            self.print_sintactic_error(p, 'Falto ")" de cerradura en regresa')
 
         def p_Cuando(p):
             '''
@@ -131,9 +221,15 @@ class sintactico:
         def p_GpoSea(p):
             '''
             GpoSea : SEA GpoConst 2DOTS BckEsp GpoSea
-                   |
+                   | SEA GpoConst 2DOTS BckEsp
             '''
             p[0] = self.join_result(p)
+
+        def p_GpoSea_Error1(p):
+            '''
+            GpoSea : SEA GpoConst error BckEsp GpoSea
+            '''
+            self.print_sintactic_error(p, 'Falto ":" en sea')
 
         def p_Mientras(p):
             '''
@@ -141,11 +237,35 @@ class sintactico:
             '''
             p[0] = self.join_result(p)
 
+        def p_Mientras_Error1(p):
+            '''
+            Mientras : MIENTRAS SE CUMPLA QUE error Exprlog RPARENTHESIS BckEsp
+            '''
+            self.print_sintactic_error(p, 'Falto "(" de apertura en mientras')
+
+        def p_Mientras_Error2(p):
+            '''
+            Mientras : MIENTRAS SE CUMPLA QUE LPARENTHESIS Exprlog error BckEsp
+            '''
+            self.print_sintactic_error(p, 'Falto ")" de cerradura en mientras')
+
         def p_Repetir(p):
             '''
             Repetir : REPETIR Block HASTA QUE LPARENTHESIS Exprlog RPARENTHESIS
             '''
             p[0] = self.join_result(p)
+
+        def p_Repetir_Error1(p):
+            '''
+            Repetir : REPETIR Block HASTA QUE error Exprlog RPARENTHESIS
+            '''
+            self.print_sintactic_error(p, 'Falto "(" de apertura en repetir')
+
+        def p_Repetir_Error2(p):
+            '''
+            Repetir : REPETIR Block HASTA QUE LPARENTHESIS Exprlog error
+            '''
+            self.print_sintactic_error(p, 'Falto ")" de cerradura en repetir')
 
         def p_Desde(p):
             '''
@@ -157,10 +277,24 @@ class sintactico:
 
         def p_Asigna(p):
             '''
-            Asigna : ID OpAsig Exprlog
-                   | ID Udim OpAsig Exprlog
+            Asigna : ID Udim OpAsig Exprlog
+                   | ID empty OpAsig Exprlog
             '''
             p[0] = self.join_result(p)
+
+        def p_Asigna_Error1(p):
+            '''
+            Asigna : ID Udim error Exprlog
+                   | ID empty error Exprlog
+            '''
+            self.print_sintactic_error(p, 'Falto ":=" en asignacion')
+
+        def p_Asigna_Error2(p):
+            '''
+            Asigna : error Udim OpAsig Exprlog
+                   | error empty OpAsig Exprlog
+            '''
+            self.print_sintactic_error(p, 'Falto "ID" en asignacion')
 
         def p_Si(p):
             '''
@@ -168,6 +302,20 @@ class sintactico:
                | SI LPARENTHESIS Exprlog RPARENTHESIS HACER BckEsp SINO BckEsp
             '''
             p[0] = self.join_result(p)
+
+        def p_Si_Error1(p):
+            '''
+            Si : SI error Exprlog RPARENTHESIS HACER BckEsp
+               | SI error Exprlog RPARENTHESIS HACER BckEsp SINO BckEsp
+            '''
+            self.print_sintactic_error(p, 'Falto "(" de apertura en Si')
+
+        def p_Si_Error2(p):
+            '''
+            Si : SI LPARENTHESIS Exprlog error HACER BckEsp
+               | SI LPARENTHESIS Exprlog error HACER BckEsp SINO BckEsp
+            '''
+            self.print_sintactic_error(p, 'Falto ")" de cerradura en Si')
 
         def p_BckEsp(p):
             '''
@@ -249,6 +397,20 @@ class sintactico:
             '''
             p[0] = self.join_result(p)
 
+        def p_Termino_Error1(p):
+            '''
+            Termino : error Exprlog RPARENTHESIS
+            '''
+            self.print_sintactic_error(
+                p, 'Falto "(" de apertura en termino')
+
+        def p_Termino_Error2(p):
+            '''
+            Termino : LPARENTHESIS Exprlog error
+            '''
+            self.print_sintactic_error(
+                p, 'Falto ")" de cerradura en termino')
+
         def p_Lfunc(p):
             '''
             Lfunc : ID LPARENTHESIS Uparams RPARENTHESIS 
@@ -256,17 +418,21 @@ class sintactico:
             '''
             p[0] = self.join_result(p)
 
-        def p_Lfunc_error1(p):
+        def p_Lfunc_Error1(p):
             '''
-            Lfunc : ID error GpoExp RPARENTHESIS
+            Lfunc : ID error Uparams RPARENTHESIS
+                  | ID error empty RPARENTHESIS 
             '''
-            self.print_sintactic_error(p, 'Falto "(" de apertura')
+            self.print_sintactic_error(
+                p, 'Falto "(" de apertura en llamada a funcion')
 
-        def p_Lfunc_error2(p):
+        def p_Lfunc_Error2(p):
             '''
-            Lfunc : ID LPARENTHESIS GpoExp error
+            Lfunc : ID LPARENTHESIS Uparams error
+                  | ID LPARENTHESIS empty error 
             '''
-            self.print_sintactic_error(p, 'Falto ")" de cerradura')
+            self.print_sintactic_error(
+                p, 'Falto ")" de cerradura en llamada a funcion')
 
         def p_Udim(p):
             '''
@@ -282,19 +448,49 @@ class sintactico:
             '''
             p[0] = self.join_result(p)
 
+        def p_Uparams_Error1(p):
+            '''
+            Uparams : Exprlog error Uparams
+            '''
+            self.print_sintactic_error(
+                p, 'Falto "," despues de la expresion')
+
         def p_Params(p):
             '''
-            Params : GpoPars 2DOTS TIPO Params
+            Params : GpoPars 2DOTS TIPO DOTCOMMA Params
+                   | GpoPars 2DOTS TIPO
                    |
             '''
             p[0] = self.join_result(p)
 
+        def p_Params_Error1(p):
+            '''
+            Params : GpoPars error TIPO DOTCOMMA Params
+                   | GpoPars error TIPO
+            '''
+            self.print_sintactic_error(
+                p, 'Falto ":" antes de poner tipo de parametro')
+
+        def p_Params_Error2(p):
+            '''
+            Params : GpoPars 2DOTS TIPO error Params
+            '''
+            self.print_sintactic_error(
+                p, 'Falto ";" despues de poner tipo de parametro')
+
         def p_grupoPars(p):
             '''
-            GpoPars : GpoPar
-                    | GpoPar COMMA GpoPars
+            GpoPars : ID COMMA GpoPars
+                    | ID
             '''
             p[0] = self.join_result(p)
+
+        def p_grupoPars_Error1(p):
+            '''
+            GpoPars : ID error GpoPars
+            '''
+            self.print_sintactic_error(
+                p, 'Falto "," despues de poner el id')
 
         def p_grupoPar(p):
             '''
@@ -316,6 +512,13 @@ class sintactico:
                      | Cte COMMA GpoConst
             '''
             p[0] = self.join_result(p)
+
+        def p_gpoConst_Error1(p):
+            '''
+            GpoConst : Cte error GpoConst
+            '''
+            self.print_sintactic_error(
+                p, 'Falto "," despues de la constante')
 
         def p_Cte(p):
             '''
@@ -343,33 +546,33 @@ class sintactico:
         def p_grupoIds(p):
             '''
             GpoIds : GpoId
-                | GpoPar
-                | GpoId COMMA GpoIds
-                | GpoPar COMMA GpoIds
+                   | GpoPar
+                   | GpoId COMMA GpoIds
+                   | GpoPar COMMA GpoIds
             '''
             p[0] = self.join_result(p)
 
         def p_grupoId(p):
             '''
             GpoId : ID OpAsig CteEnt
-                | ID OpAsig CteReal
-                | ID OpAsig CteAlfa
-                | ID OpAsig CteLog
-                | ID Dimens
+                  | ID OpAsig CteReal
+                  | ID OpAsig CteAlfa
+                  | ID OpAsig CteLog
+                  | ID Dimens
             '''
             p[0] = self.join_result(p)
 
         def p_Dimens_1D(p):
             '''
             Dimens : LBRACKET ID RBRACKET
-                | LBRACKET CteEnt RBRACKET
+                   | LBRACKET CteEnt RBRACKET
             '''
             p[0] = self.join_result(p)
 
         def p_Dimens_2D(p):
             '''
             Dimens : LBRACKET ID RBRACKET LBRACKET ID RBRACKET
-                | LBRACKET CteEnt RBRACKET LBRACKET CteEnt RBRACKET
+                   | LBRACKET CteEnt RBRACKET LBRACKET CteEnt RBRACKET
             '''
             p[0] = self.join_result(p)
 
@@ -381,6 +584,10 @@ class sintactico:
         def p_error(p):
             if not p:
                 print('Fin del archivo')
+            while True:
+                tok = parser.token()             # Get the next token
+                if not tok or tok.type == 'DOTCOMMA':
+                    break
             print(p.type, p.value, p.lineno)
 
         parser = yacc.yacc()
