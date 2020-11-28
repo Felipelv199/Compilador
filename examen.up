@@ -17,7 +17,7 @@ Inicio
       Inicio
          Sea "R", "r": imprimenl("Factorial Recursivo de ", n, " es= ", FacRec(n))
          Sea "I", "i": imprimenl("Factorial Iterativo de ", n, " es= ", Faciter(n))
-         cualquier Otro: Si (opc <> "S" y opc <> "s") hacer 
+         Otro: Si (opc <> "S" y opc <> "s") hacer 
                   Imprimenl("Opcion Invalida!!!")
       Fin;
    hasta que (opc = "S" o opc = "s");
@@ -68,7 +68,7 @@ Inicio
    OrdVec(n);
    Impvec(n);
    LeeMat(n);
-   MulMat(n, valorde);
+   MulMat(n, valores);
    ImpMat(n);
 Fin de Procedimiento;
 
@@ -101,6 +101,7 @@ Inicio
    Desde el valor de i:=1 hasta (k-1)
       Desde el valor de j:=i+1 hasta k
          Si (Vector[i]>Vector[j]) hacer
+            regresa;
 Fin de Procedimiento;
 
 Procedimiento ImpVec(k:Entero)
@@ -123,7 +124,9 @@ Procedimiento MulMat(k,v:entero)
 Inicio
    Desde el valor de i:=1 hasta k
       Desde el valor de j:=1 hasta k
+      Inicio
          Matriz[i][j]:=Matriz[i][j]*v;   
+      Fin;
 Fin de Procedimiento;
 
 Procedimiento ImpMat(k:Entero)
@@ -138,7 +141,7 @@ Programa
    Selecciona();
    Imprime("Dame Radio = ");Lee(r);
    Imprime("Dame Altura= ");Lee(s);
-   Imprimenl("El Volum del Cilindro= ", VolCil(r, s);
+   Imprimenl("El Volum del Cilindro= ", VolCil(r, s));
    Imprimenl("Es el radio= ", r, " mayor que Altura= ", s, " ? ", Compara(r, s, 2));
    LeeVecmat();
    Imprime("Dame tu nombre: ");

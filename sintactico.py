@@ -29,6 +29,20 @@ class sintactico:
             '''
             p[0] = self.join_result(p)
 
+        def p_Prgrm_error1(p):
+            '''
+            Prgrm : constantes variables FuncProc error Block FIN DE PROGRAMA DOT
+            '''
+            self.print_sintactic_error(
+                p, '<Sintactico> Para iniciar el programa es necesario escribir <Programa>')
+
+        def p_Prgrm_error2(p):
+            '''
+            Prgrm : constantes variables FuncProc PROGRAMA Block FIN DE error DOT
+            '''
+            self.print_sintactic_error(
+                p, '<Sintactico> Para terminar el programa es necesario escribir <Fin de programa.>')
+
         def p_FuncProc(p):
             '''
             FuncProc : Func FuncProc
@@ -214,7 +228,7 @@ class sintactico:
         def p_Cuando(p):
             '''
             Cuando : CUANDO EL VALOR DE ID INICIO GpoSea FIN
-                   | CUANDO EL VALOR DE ID INICIO GpoSea CUALQUIER OTRO 2DOTS BckEsp FIN
+                   | CUANDO EL VALOR DE ID INICIO GpoSea OTRO 2DOTS BckEsp FIN
             '''
             p[0] = self.join_result(p)
 
@@ -270,10 +284,21 @@ class sintactico:
         def p_Desde(p):
             '''
             Desde : DESDE EL VALOR DE Asigna HASTA Expr BckEsp
+                  | DESDE EL VALOR DE Asigna HASTA LPARENTHESIS Exprlog RPARENTHESIS  BckEsp
                   | DESDE EL VALOR DE Asigna HASTA Expr INCR CteEnt BckEsp
                   | DESDE EL VALOR DE Asigna HASTA Expr DECR CteEnt BckEsp
             '''
             p[0] = self.join_result(p)
+
+        def p_Desde_error1(p):
+            '''
+            Desde : DESDE EL VALOR DE Asigna error Expr BckEsp
+                  | DESDE EL VALOR DE Asigna error LPARENTHESIS Exprlog RPARENTHESIS  BckEsp
+                  | DESDE EL VALOR DE Asigna error Expr INCR CteEnt BckEsp
+                  | DESDE EL VALOR DE Asigna error Expr DECR CteEnt BckEsp
+            '''
+            self.print_sintactic_error(
+                p, '<sintactico> Se esperaba la palabra <hasta>')
 
         def p_Asigna(p):
             '''
@@ -324,6 +349,13 @@ class sintactico:
                    |
             '''
             p[0] = self.join_result(p)
+
+        def p_BckEsp_errr1(p):
+            '''
+            BckEsp : error Block FIN
+            '''
+            self.print_sintactic_error(
+                p, '<sintactico> se esperaba <Inicio> para iniciar el bloque')
 
         def p_Exprlog(p):
             '''
@@ -389,27 +421,13 @@ class sintactico:
             Termino : ID
                     | Lfunc
                     | ID Udim
-                    | LPARENTHESIS Exprlog RPARENTHESIS
                     | CteEnt
                     | CteReal
                     | CteAlfa
                     | CteLog
+                    | Dimens
             '''
             p[0] = self.join_result(p)
-
-        def p_Termino_Error1(p):
-            '''
-            Termino : error Exprlog RPARENTHESIS
-            '''
-            self.print_sintactic_error(
-                p, 'Falto "(" de apertura en termino')
-
-        def p_Termino_Error2(p):
-            '''
-            Termino : LPARENTHESIS Exprlog error
-            '''
-            self.print_sintactic_error(
-                p, 'Falto ")" de cerradura en termino')
 
         def p_Lfunc(p):
             '''
@@ -584,13 +602,15 @@ class sintactico:
         def p_error(p):
             if not p:
                 print('Fin del archivo')
+            else:
+                print(p.type, p.value, p.lineno)
             while True:
                 tok = parser.token()             # Get the next token
                 if not tok or tok.type == 'DOTCOMMA':
                     break
-            print(p.type, p.value, p.lineno)
 
         parser = yacc.yacc()
         s = self.input
         result = parser.parse(s, lexer=lexer)
+
         print(result)
