@@ -8,13 +8,19 @@ class sintactico:
         self.input = inpt
         self.file_error = f_error
 
-    def write_sintactic_error(self, error_description):
+    def write_sintactic_error(self, p, t, description):
+        error_line_n = p.lexer.lineno
+        error_line = []
+        token = p.parser.token()
+        while True:
+            if not token:
+                break
+            error_line.append(str(token.value))
+            if token.value == ';':
+                break
+            token = p.parser.token()
         self.file_error.write('{:<10}|{:<30}|{:<40}|{}\n'.format(
-            '', '', error_description, ''))
-
-    def print_sintactic_error(self, p, error_description):
-        print('ERROR: {} | {}'.format(
-            p.lexer.lineno, error_description))
+            str(error_line_n), t, description, ' '.join(error_line)))
 
     def join_result(self, p):
         s = ''
@@ -28,20 +34,6 @@ class sintactico:
             Prgrm : constantes variables FuncProc PROGRAMA Block FIN DE PROGRAMA DOT
             '''
             p[0] = self.join_result(p)
-
-        def p_Prgrm_error1(p):
-            '''
-            Prgrm : constantes variables FuncProc error Block FIN DE PROGRAMA DOT
-            '''
-            self.print_sintactic_error(
-                p, '<Sintactico> Para iniciar el programa es necesario escribir <Programa>')
-
-        def p_Prgrm_error2(p):
-            '''
-            Prgrm : constantes variables FuncProc PROGRAMA Block FIN DE error DOT
-            '''
-            self.print_sintactic_error(
-                p, '<Sintactico> Para terminar el programa es necesario escribir <Fin de programa.>')
 
         def p_FuncProc(p):
             '''
@@ -61,22 +53,22 @@ class sintactico:
             '''
             Proc : PROCEDIMIENTO ID error Params RPARENTHESIS variables INICIO Block FIN DE PROCEDIMIENTO DOTCOMMA
             '''
-            self.print_sintactic_error(
-                p, 'Falto "(" de apertura en el procedimiento')
+            self.write_sintactic_error(
+                p, '<(>', 'Falto parentesis de apertura en el procedimiento')
 
         def p_Proc_Error2(p):
             '''
             Proc : PROCEDIMIENTO ID LPARENTHESIS Params error variables INICIO Block FIN DE PROCEDIMIENTO DOTCOMMA
             '''
-            self.print_sintactic_error(
-                p, 'Falto ")" de cerradura en el procedimiento')
+            self.write_sintactic_error(
+                p, '<)>', 'Falto parentesis de cerradura en el procedimiento')
 
         def p_Proc_Error3(p):
             '''
             Proc : PROCEDIMIENTO ID LPARENTHESIS Params RPARENTHESIS variables INICIO Block FIN DE PROCEDIMIENTO error
             '''
-            self.print_sintactic_error(
-                p, 'Falto ";" al terminar el procedimiento')
+            self.write_sintactic_error(
+                p, '<;>', 'Falto punto y coma al terminar el procedimiento')
 
         def p_Func(p):
             '''
@@ -88,29 +80,29 @@ class sintactico:
             '''
             Func : FUNCION ID error Params RPARENTHESIS 2DOTS TIPO variables INICIO Block FIN DE FUNCION DOTCOMMA
             '''
-            self.print_sintactic_error(
-                p, 'Falto "(" de apertura en la función')
+            self.write_sintactic_error(
+                p, '<(>', 'Falto parentesis de apertura en la función')
 
         def p_Func_Error2(p):
             '''
             Func : FUNCION ID LPARENTHESIS Params error 2DOTS TIPO variables INICIO Block FIN DE FUNCION DOTCOMMA
             '''
-            self.print_sintactic_error(
-                p, 'Falto ")" de cerradura en la función')
+            self.write_sintactic_error(
+                p, '<)>', 'Falto parentesis de cerradura en la función')
 
         def p_Func_Error3(p):
             '''
             Func : FUNCION ID LPARENTHESIS Params RPARENTHESIS error TIPO variables INICIO Block FIN DE FUNCION DOTCOMMA
             '''
-            self.print_sintactic_error(
-                p, 'Falto ":" antes del tipo en la función')
+            self.write_sintactic_error(
+                p, '<:>', 'Faltaron dos puntos antes del tipo en la función')
 
         def p_Func_Error4(p):
             '''
             Func : FUNCION ID LPARENTHESIS Params RPARENTHESIS 2DOTS TIPO variables INICIO Block FIN DE FUNCION error
             '''
-            self.print_sintactic_error(
-                p, 'Falto ";" al finalizar la función')
+            self.write_sintactic_error(
+                p, '<;>', 'Falto punto y coma al finalizar la función')
 
         def p_Block(p):
             '''
@@ -123,8 +115,8 @@ class sintactico:
             '''
             Block : Estatuto error Block
             '''
-            self.print_sintactic_error(
-                p, 'Falto ";" al terminar el bloque')
+            self.write_sintactic_error(
+                p, '<;>', 'Falto punto y coma al terminar el bloque')
 
         def p_Estatuto(p):
             '''
@@ -157,16 +149,16 @@ class sintactico:
             Lproc : ID error Uparams RPARENTHESIS
                   | ID error empty RPARENTHESIS
             '''
-            self.print_sintactic_error(
-                p, 'Falto "(" de apertura en llamada a procedimiento')
+            self.write_sintactic_error(
+                p, '<(>', 'Falto parentesis de apertura en llamada a procedimiento')
 
         def p_Lproc_Error2(p):
             '''
             Lproc : ID LPARENTHESIS Uparams error
                   | ID LPARENTHESIS empty error
             '''
-            self.print_sintactic_error(
-                p, 'Falto ")" de cerradura en llamada a procedimiento')
+            self.write_sintactic_error(
+                p, '<)>', 'Falto parentesis de cerradura en llamada a procedimiento')
 
         def p_Lee(p):
             '''
@@ -185,13 +177,15 @@ class sintactico:
             '''
             Imprimenl : IMPRIMENL error GpoExp RPARENTHESIS
             '''
-            self.print_sintactic_error(p, 'Falto "(" de apertura')
+            self.write_sintactic_error(
+                p, '<(>', 'Falto parentesis de apertura en Imprimenl')
 
         def p_Imprimenl_error2(p):
             '''
             Imprimenl : IMPRIMENL LPARENTHESIS GpoExp error
             '''
-            self.print_sintactic_error(p, 'Falto ")" de cerradura')
+            self.write_sintactic_error(
+                p, '<)>', 'Falto parentesis de cerradura en Imprimenl')
 
         def p_Imprime(p):
             '''
@@ -217,13 +211,15 @@ class sintactico:
             '''
             Regresa : REGRESA error Exprlog RPARENTHESIS
             '''
-            self.print_sintactic_error(p, 'Falto "(" de apertura en regresa')
+            self.write_sintactic_error(
+                p, '<(>', 'Falto parentesis de apertura en regresa')
 
         def p_Regresa_Error2(p):
             '''
             Regresa : REGRESA LPARENTHESIS Exprlog error
             '''
-            self.print_sintactic_error(p, 'Falto ")" de cerradura en regresa')
+            self.write_sintactic_error(
+                p, '<)>', 'Falto parentesis de cerradura en regresa')
 
         def p_Cuando(p):
             '''
@@ -243,7 +239,7 @@ class sintactico:
             '''
             GpoSea : SEA GpoConst error BckEsp GpoSea
             '''
-            self.print_sintactic_error(p, 'Falto ":" en sea')
+            self.write_sintactic_error(p, ';', 'Falto punto y coma en sea')
 
         def p_Mientras(p):
             '''
@@ -255,13 +251,15 @@ class sintactico:
             '''
             Mientras : MIENTRAS SE CUMPLA QUE error Exprlog RPARENTHESIS BckEsp
             '''
-            self.print_sintactic_error(p, 'Falto "(" de apertura en mientras')
+            self.write_sintactic_error(
+                p, '<(>', 'Falto parentesis de apertura en mientras')
 
         def p_Mientras_Error2(p):
             '''
             Mientras : MIENTRAS SE CUMPLA QUE LPARENTHESIS Exprlog error BckEsp
             '''
-            self.print_sintactic_error(p, 'Falto ")" de cerradura en mientras')
+            self.write_sintactic_error(
+                p, '<)>', 'Falto parentesis de cerradura en mientras')
 
         def p_Repetir(p):
             '''
@@ -273,13 +271,15 @@ class sintactico:
             '''
             Repetir : REPETIR Block HASTA QUE error Exprlog RPARENTHESIS
             '''
-            self.print_sintactic_error(p, 'Falto "(" de apertura en repetir')
+            self.write_sintactic_error(
+                p, '<(>', 'Falto parentesis de apertura en repetir')
 
         def p_Repetir_Error2(p):
             '''
             Repetir : REPETIR Block HASTA QUE LPARENTHESIS Exprlog error
             '''
-            self.print_sintactic_error(p, 'Falto ")" de cerradura en repetir')
+            self.write_sintactic_error(
+                p, '<)>', 'Falto parentesis de cerradura en repetir')
 
         def p_Desde(p):
             '''
@@ -289,16 +289,6 @@ class sintactico:
                   | DESDE EL VALOR DE Asigna HASTA Expr DECR CteEnt BckEsp
             '''
             p[0] = self.join_result(p)
-
-        def p_Desde_error1(p):
-            '''
-            Desde : DESDE EL VALOR DE Asigna error Expr BckEsp
-                  | DESDE EL VALOR DE Asigna error LPARENTHESIS Exprlog RPARENTHESIS  BckEsp
-                  | DESDE EL VALOR DE Asigna error Expr INCR CteEnt BckEsp
-                  | DESDE EL VALOR DE Asigna error Expr DECR CteEnt BckEsp
-            '''
-            self.print_sintactic_error(
-                p, '<sintactico> Se esperaba la palabra <hasta>')
 
         def p_Asigna(p):
             '''
@@ -312,14 +302,8 @@ class sintactico:
             Asigna : ID Udim error Exprlog
                    | ID empty error Exprlog
             '''
-            self.print_sintactic_error(p, 'Falto ":=" en asignacion')
-
-        def p_Asigna_Error2(p):
-            '''
-            Asigna : error Udim OpAsig Exprlog
-                   | error empty OpAsig Exprlog
-            '''
-            self.print_sintactic_error(p, 'Falto "ID" en asignacion')
+            self.write_sintactic_error(
+                p, '<:=>', 'Falto simbolo de asignacion en asignacion')
 
         def p_Si(p):
             '''
@@ -333,14 +317,16 @@ class sintactico:
             Si : SI error Exprlog RPARENTHESIS HACER BckEsp
                | SI error Exprlog RPARENTHESIS HACER BckEsp SINO BckEsp
             '''
-            self.print_sintactic_error(p, 'Falto "(" de apertura en Si')
+            self.write_sintactic_error(
+                p, '<(>', 'Falto parentesis de apertura en Si')
 
         def p_Si_Error2(p):
             '''
             Si : SI LPARENTHESIS Exprlog error HACER BckEsp
                | SI LPARENTHESIS Exprlog error HACER BckEsp SINO BckEsp
             '''
-            self.print_sintactic_error(p, 'Falto ")" de cerradura en Si')
+            self.write_sintactic_error(
+                p, '<)>', 'Falto parentesis de cerradura en Si')
 
         def p_BckEsp(p):
             '''
@@ -349,13 +335,6 @@ class sintactico:
                    |
             '''
             p[0] = self.join_result(p)
-
-        def p_BckEsp_errr1(p):
-            '''
-            BckEsp : error Block FIN
-            '''
-            self.print_sintactic_error(
-                p, '<sintactico> se esperaba <Inicio> para iniciar el bloque')
 
         def p_Exprlog(p):
             '''
@@ -441,16 +420,16 @@ class sintactico:
             Lfunc : ID error Uparams RPARENTHESIS
                   | ID error empty RPARENTHESIS 
             '''
-            self.print_sintactic_error(
-                p, 'Falto "(" de apertura en llamada a funcion')
+            self.write_sintactic_error(
+                p, '<(>', 'Falto parentesis de apertura en llamada a funcion')
 
         def p_Lfunc_Error2(p):
             '''
             Lfunc : ID LPARENTHESIS Uparams error
                   | ID LPARENTHESIS empty error 
             '''
-            self.print_sintactic_error(
-                p, 'Falto ")" de cerradura en llamada a funcion')
+            self.write_sintactic_error(
+                p, ')', 'Falto parentesis de cerradura en llamada a funcion')
 
         def p_Udim(p):
             '''
@@ -470,8 +449,8 @@ class sintactico:
             '''
             Uparams : Exprlog error Uparams
             '''
-            self.print_sintactic_error(
-                p, 'Falto "," despues de la expresion')
+            self.write_sintactic_error(
+                p, '<,>', 'Falto coma despues de la expresion')
 
         def p_Params(p):
             '''
@@ -486,15 +465,15 @@ class sintactico:
             Params : GpoPars error TIPO DOTCOMMA Params
                    | GpoPars error TIPO
             '''
-            self.print_sintactic_error(
-                p, 'Falto ":" antes de poner tipo de parametro')
+            self.write_sintactic_error(
+                p, '<:>', 'Faltaron dos puntos antes de poner tipo de parametro')
 
         def p_Params_Error2(p):
             '''
             Params : GpoPars 2DOTS TIPO error Params
             '''
-            self.print_sintactic_error(
-                p, 'Falto ";" despues de poner tipo de parametro')
+            self.write_sintactic_error(
+                p, '<;>', 'Falto punto y coma despues de poner tipo de parametro')
 
         def p_grupoPars(p):
             '''
@@ -507,8 +486,8 @@ class sintactico:
             '''
             GpoPars : ID error GpoPars
             '''
-            self.print_sintactic_error(
-                p, 'Falto "," despues de poner el id')
+            self.write_sintactic_error(
+                p, '<,>', 'Falto coma despues de poner el id')
 
         def p_grupoPar(p):
             '''
@@ -535,8 +514,8 @@ class sintactico:
             '''
             GpoConst : Cte error GpoConst
             '''
-            self.print_sintactic_error(
-                p, 'Falto "," despues de la constante')
+            self.write_sintactic_error(
+                p, '<,>', 'Falto coma despues de la constante')
 
         def p_Cte(p):
             '''
@@ -604,13 +583,8 @@ class sintactico:
                 print('Fin del archivo')
             else:
                 print(p.type, p.value, p.lineno)
-            while True:
-                tok = parser.token()             # Get the next token
-                if not tok or tok.type == 'DOTCOMMA':
-                    break
 
         parser = yacc.yacc()
         s = self.input
         result = parser.parse(s, lexer=lexer)
-
         print(result)
