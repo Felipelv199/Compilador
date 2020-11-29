@@ -1,7 +1,16 @@
+from ejecutable import Ejecutable
 from sintactico import sintactico
 from lexico import lexico
+from semantico import Symbol_Table
+from sys import argv
+from ejecutable import Ejecutable
 
-file_name = "examen"
+try:
+    file_name = argv[1]
+except:
+    print('No file name was provided')
+    exit()
+
 file = open("{}.up".format(file_name), "r")
 
 lex_file = open("{}.lex".format(file_name), "w")
@@ -19,13 +28,18 @@ error_file.write(("{:<10}|{:<30}|{:<40}|{}\n").format(
 error_file.write(
     "----------------------------------------------------------------------------------------------------\n")
 
+eje_file = open("{}.eje".format(file_name), "w")
+
 s = file.read()
 lex = lexico(s, lex_file, error_file)
 lexer = lex.start_lexico()
 
-sintactic = sintactico(s, error_file)
+symbol_table = Symbol_Table(error_file)
+ejecutable = Ejecutable(eje_file)
+sintactic = sintactico(s, error_file, symbol_table, ejecutable)
 sintactic.start_sintactic(lexer)
 
 file.close()
 lex_file.close()
 error_file.close()
+eje_file.close()

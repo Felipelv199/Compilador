@@ -9,3 +9,4 @@ parsetab.py
 *.l
 __pycache__
 *.out
+*.eje

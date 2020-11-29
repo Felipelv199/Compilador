@@ -4,9 +4,11 @@ from lexico import tokens
 
 
 class sintactico:
-    def __init__(self, inpt, f_error):
+    def __init__(self, inpt, f_error, s_t, eje):
         self.input = inpt
         self.file_error = f_error
+        self.s_table = s_t
+        self.eje = eje
 
     def write_sintactic_error(self, p, t, description):
         error_line_n = p.lexer.lineno
@@ -21,6 +23,7 @@ class sintactico:
             token = p.parser.token()
         self.file_error.write('{:<10}|{:<30}|{:<40}|{}\n'.format(
             str(error_line_n), t, description, ' '.join(error_line)))
+        p.parser.errok()
 
     def join_result(self, p):
         s = ''
@@ -33,6 +36,8 @@ class sintactico:
             '''
             Prgrm : constantes variables FuncProc PROGRAMA Block FIN DE PROGRAMA DOT
             '''
+            self.eje.number += 1
+            self.eje.write_in_document('OPR', '0,0')
             p[0] = self.join_result(p)
 
         def p_FuncProc(p):
@@ -170,12 +175,16 @@ class sintactico:
         def p_Imprimenl(p):
             '''
             Imprimenl : IMPRIMENL LPARENTHESIS GpoExp RPARENTHESIS
+                      | IMPRIMENL LPARENTHESIS empty RPARENTHESIS
             '''
+            self.eje.number += 1
+            self.eje.write_in_document('OPR', '0,21')
             p[0] = self.join_result(p)
 
         def p_Imprimenl_error1(p):
             '''
             Imprimenl : IMPRIMENL error GpoExp RPARENTHESIS
+                      | IMPRIMENL error empty RPARENTHESIS
             '''
             self.write_sintactic_error(
                 p, '<(>', 'Falto parentesis de apertura en Imprimenl')
@@ -183,6 +192,7 @@ class sintactico:
         def p_Imprimenl_error2(p):
             '''
             Imprimenl : IMPRIMENL LPARENTHESIS GpoExp error
+                      | IMPRIMENL LPARENTHESIS empty error
             '''
             self.write_sintactic_error(
                 p, '<)>', 'Falto parentesis de cerradura en Imprimenl')
@@ -190,8 +200,27 @@ class sintactico:
         def p_Imprime(p):
             '''
             Imprime : IMPRIME LPARENTHESIS GpoExp RPARENTHESIS
+                    | IMPRIME LPARENTHESIS empty RPARENTHESIS
             '''
+            self.eje.number += 1
+            self.eje.write_in_document('OPR', '0,20')
             p[0] = self.join_result(p)
+
+        def p_Imprime_error1(p):
+            '''
+            Imprime : IMPRIME error GpoExp RPARENTHESIS
+                    | IMPRIME error empty RPARENTHESIS
+            '''
+            self.write_sintactic_error(
+                p, '<(>', 'Falto parentesis de cerradura en Imprime')
+
+        def p_Imprime_error2(p):
+            '''
+            Imprime : IMPRIME LPARENTHESIS GpoExp error
+                    | IMPRIME LPARENTHESIS empty error
+            '''
+            self.write_sintactic_error(
+                p, '<)>', 'Falto parentesis de cerradura en Imprime')
 
         def p_GpoExp(p):
             '''
@@ -290,16 +319,17 @@ class sintactico:
             '''
             p[0] = self.join_result(p)
 
-        def p_Asigna(p):
+        def p_Asigna_Udim(p):
             '''
-            Asigna : ID Udim OpAsig Exprlog
+            Asigna : ID Dimens OpAsig Exprlog
                    | ID empty OpAsig Exprlog
             '''
+            self.s_table.change_variable_value(p[1], p[4])
             p[0] = self.join_result(p)
 
         def p_Asigna_Error1(p):
             '''
-            Asigna : ID Udim error Exprlog
+            Asigna : ID Dimens error Exprlog
                    | ID empty error Exprlog
             '''
             self.write_sintactic_error(
@@ -367,19 +397,29 @@ class sintactico:
         def p_Expr(p):
             '''
             Expr : Multi
-                 | Multi PLUS Expr
-                 | Multi MINUS Expr
             '''
             p[0] = self.join_result(p)
 
+        def p_Expr_operations(p):
+            '''
+            Expr : Multi PLUS Expr
+                 | Multi MINUS Expr
+            '''
+            p[0] = self.s_table.math_operation(p[1], p[2], p[3])
+
         def p_Multi(p):
+            '''
+            Multi : Expo
+            '''
+            p[0] = self.join_result(p)
+
+        def p_Multi_operations(p):
             '''
             Multi : Expo ADD Multi
                   | Expo DIVIDE Multi
                   | Expo PERCENTAGE Multi
-                  | Expo
             '''
-            p[0] = self.join_result(p)
+            p[0] = self.s_table.math_operation(p[1], p[2], p[3])
 
         def p_Expo(p):
             '''
@@ -410,15 +450,15 @@ class sintactico:
 
         def p_Lfunc(p):
             '''
-            Lfunc : ID LPARENTHESIS Uparams RPARENTHESIS 
-                  | ID LPARENTHESIS empty RPARENTHESIS 
+            Lfunc : ID LPARENTHESIS Uparams RPARENTHESIS
+                  | ID LPARENTHESIS empty RPARENTHESIS
             '''
             p[0] = self.join_result(p)
 
         def p_Lfunc_Error1(p):
             '''
             Lfunc : ID error Uparams RPARENTHESIS
-                  | ID error empty RPARENTHESIS 
+                  | ID error empty RPARENTHESIS
             '''
             self.write_sintactic_error(
                 p, '<(>', 'Falto parentesis de apertura en llamada a funcion')
@@ -426,7 +466,7 @@ class sintactico:
         def p_Lfunc_Error2(p):
             '''
             Lfunc : ID LPARENTHESIS Uparams error
-                  | ID LPARENTHESIS empty error 
+                  | ID LPARENTHESIS empty error
             '''
             self.write_sintactic_error(
                 p, ')', 'Falto parentesis de cerradura en llamada a funcion')
@@ -497,10 +537,32 @@ class sintactico:
 
         def p_constantes(p):
             '''
-            constantes : CONSTANTES GpoIds DOTCOMMA constantes
-                       | GpoIds DOTCOMMA constantes
-                       |
+            constantes : CONSTANTES gpoConstantes
             '''
+            self.s_table.stack.append('#')
+            self.s_table.add_constants(p.lexer.lineno)
+            p[0] = self.join_result(p)
+
+        def p_constantes_empty(p):
+            '''
+            constantes : empty
+            '''
+            p[0] = self.join_result(p)
+
+        def p_gpoConstantes(p):
+            '''
+            gpoConstantes : ID OpAsig Cte DOTCOMMA gpoConstantes
+            '''
+            self.s_table.stack.append(p[1])
+            self.s_table.stack.append(p[3])
+            p[0] = self.join_result(p)
+
+        def p_gpoConstantes_recursion(p):
+            '''
+            gpoConstantes : ID OpAsig Cte DOTCOMMA
+            '''
+            self.s_table.stack.append(p[1])
+            self.s_table.stack.append(p[3])
             p[0] = self.join_result(p)
 
         def p_gpoConst(p):
@@ -533,18 +595,32 @@ class sintactico:
             '''
             p[0] = self.join_result(p)
 
-        def p_grupoVars(p):
+        def p_grupoVars_recursion(p):
             '''
             GpoVars : GpoIds 2DOTS TIPO DOTCOMMA GpoVars
-                    |
             '''
+            self.s_table.stack += p[1].split(',')
+            self.s_table.add_variables_type(p[3], p.lexer.lineno)
+            p[0] = self.join_result(p)
+
+        def p_grupoVars(p):
+            '''
+            GpoVars : GpoIds 2DOTS TIPO DOTCOMMA
+            '''
+            self.s_table.stack += p[1].split(',')
+            self.s_table.add_variables_type(p[3], p.lexer.lineno)
             p[0] = self.join_result(p)
 
         def p_grupoIds(p):
             '''
             GpoIds : GpoId
                    | GpoPar
-                   | GpoId COMMA GpoIds
+            '''
+            p[0] = self.join_result(p)
+
+        def p_grupoIds_recursion(p):
+            '''
+            GpoIds : GpoId COMMA GpoIds
                    | GpoPar COMMA GpoIds
             '''
             p[0] = self.join_result(p)
@@ -555,7 +631,12 @@ class sintactico:
                   | ID OpAsig CteReal
                   | ID OpAsig CteAlfa
                   | ID OpAsig CteLog
-                  | ID Dimens
+            '''
+            p[0] = self.join_result(p)
+
+        def p_grupoId_dimens(p):
+            '''
+            GpoId : ID Dimens
             '''
             p[0] = self.join_result(p)
 
@@ -587,4 +668,4 @@ class sintactico:
         parser = yacc.yacc()
         s = self.input
         result = parser.parse(s, lexer=lexer)
-        print(result)
+        print(self.s_table.table)
