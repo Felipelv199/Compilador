@@ -1,0 +1,12 @@
+variables username, pasword:Alfabetico;
+
+Programa
+Imprimenl("-----------------------Log In-----------------------);
+Imprimenl("Dame tu nombre de usuario: ");
+Le(username);
+Imprimnl("Dame tu contraseña: ");
+Lee(password);
+limpiar
+Imprimenl"---------------------Bienvenido---------------------");
+Imprimenl(username);
+Fin de Program.

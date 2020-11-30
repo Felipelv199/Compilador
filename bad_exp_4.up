@@ -1,0 +1,38 @@
+variales x,b,r:Real;
+
+Programa
+Imprimenl("------------------Calculadora----------------------");
+Imprimenl("Ingrese a:");
+Lee(a);
+Imprimenl("Ingrese b:");
+Leers(b);
+Limpiar;
+r := a+b;
+Imprimenl("Suma: ");
+Imprime(a);
+Imprime(" + ");
+Imprime(b);
+Imprime(" = ");
+Imprimenl(r);
+r := 5-b;
+Imprimenl("Resta: ");
+Imprime(a);
+Imprime(" - ");
+Imprime(b);
+Imprime(" = ");
+Imprimenl(r);
+r := a*b;
+Imprimenl("Multiplicacion: ");
+Imprime(a);
+Imprime(" * ");
+Imprime(b);
+Imprime(" = ");
+Imprimenl(r);
+r : a/b;
+Imprimenl("Division: ");
+Imprme(a);
+Imprime(" / ");
+Imprime(b);
+Imprime(" = ");
+Imprimenl(r);
+Fin de Programa.
