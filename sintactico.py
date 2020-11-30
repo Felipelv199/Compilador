@@ -11,8 +11,10 @@ class sintactico:
         self.s_table = s_t
         self.eje = eje
         self.li_number = 0
+        self.error_n = 0
 
     def write_sintactic_error(self, p, t, description):
+        self.error_n += 1
         error_line_n = p.lexer.lineno
         error_line = []
         token = p.parser.token()
@@ -23,7 +25,7 @@ class sintactico:
             if token.value == ';':
                 break
             token = p.parser.token()
-        self.file_error.write('{:<10}|{:<30}|{:<40}|{}\n'.format(
+        self.file_error.write('{:<10}|{:<30}|<sintactico> {:<40}|{}\n'.format(
             str(error_line_n), t, description, ' '.join(error_line)))
         p.parser.errok()
 
@@ -33,7 +35,7 @@ class sintactico:
             s += str(p[i])
         return s
 
-    def start_sintactic(self, lexer):
+    def start_sintactic(self, lex):
         def p_Prgrm(p):
             ''' 
             Prgrm : constantes variables FuncProc PROGRAMA Block FIN DE PROGRAMA DOT
@@ -140,14 +142,9 @@ class sintactico:
                      | Imprime
                      | Imprimenl
                      | Leer
+                     | Si
             '''
             p[0] = self.join_result(p)
-
-        def p_Estatuto_Si(p):
-            '''
-            Estatuto : Si
-            '''
-            print(p[1], self.s_table.instructions)
 
         def p_Estatuto_limpiar(p):
             '''
@@ -184,7 +181,12 @@ class sintactico:
             Leer : LEE LPARENTHESIS ID RPARENTHESIS
                  | LEE LPARENTHESIS ID Udim RPARENTHESIS
             '''
-            self.s_table.add_instruction('OPR', '{},19'.format(p[3]))
+            id = p[3]
+            if id not in self.s_table.table:
+                self.s_table.write_semantic_error(
+                    p.lexer.lineno-1, id, '<semantico> La variable o constante no a sido declarada')
+                return
+            self.s_table.add_instruction('OPR', '{},19'.format(id))
             self.li_number = self.s_table.i_number
 
         def p_Imprimenl(p):
@@ -433,6 +435,7 @@ class sintactico:
             '''
             Opno : NO Oprel
             '''
+            print(p[1], p[2])
             self.s_table.add_instruction('OPR', '0,17')
             self.li_number = self.s_table.i_number
             p[0] = self.join_result(p)
@@ -500,27 +503,6 @@ class sintactico:
             '''
             Signo : Termino
             '''
-            p[0] = self.join_result(p)
-
-        def p_Signo_minus(p):
-            '''
-            Signo : MINUS Termino
-            '''
-            type = ''
-            if p[2] in self.s_table.table:
-                value = self.s_table.table[p[2]].valor
-                if value == '':
-                    return
-                type = self.s_table.get_cte_type(value)
-            else:
-                type = self.s_table.get_cte_type(p[2])
-
-            if type != 'real' and type != 'entero':
-                self.s_table.write_semantic_error(
-                    p.lexer.lineno-1, self.join_result(p), '<semantico> Esta operacion no puede ser realizada por este tipo de dato')
-                return
-            self.s_table.add_instruction('OPR', '0,3')
-            self.li_number = self.s_table.i_number
             p[0] = self.join_result(p)
 
         def p_Termino(p):
@@ -734,6 +716,14 @@ class sintactico:
             self.s_table.add_variables_type(p[3], p.lexer.lineno)
             p[0] = self.join_result(p)
 
+        def p_grupoVars_error(p):
+            '''
+            GpoVars : GpoIds error TIPO DOTCOMMA
+                    | GpoIds error TIPO DOTCOMMA GpoVars
+            '''
+            self.write_sintactic_error(
+                p, '<:>', 'Falto dos puntos antes de declarar los tipos')
+
         def p_grupoIds(p):
             '''
             GpoIds : GpoId
@@ -785,12 +775,14 @@ class sintactico:
         def p_error(p):
             if not p:
                 print('Fin del archivo')
-            else:
-                print(p.type, p.value, p.lineno)
 
+        lexer = lex.start_lexico()
         parser = yacc.yacc()
         s = self.input
         parser.parse(s, lexer=lexer)
-        self.eje.write_in_document_tags(self.s_table.tags)
-        self.eje.write_in_document_instructions(self.s_table.instructions)
-        print(self.s_table.table)
+        errors = self.error_n + lex.error_n + self.s_table.error_n
+        if errors == 0:
+            self.eje.write_in_document_tags(self.s_table.tags)
+            self.eje.write_in_document_instructions(self.s_table.instructions)
+        else:
+            print("Corrija los errores antes de continuar")

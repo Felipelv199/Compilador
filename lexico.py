@@ -87,6 +87,7 @@ class lexico:
         self.input = inpt
         self.file_lex = f_lex
         self.file_error = f_error
+        self.error_n = 0
 
     def get_error_line(self, t):
         s = ''
@@ -101,6 +102,7 @@ class lexico:
     def write_lexical_error(self, t, error_description):
         if t.lexer.lineno == -1:
             return
+        self.error_n += 1
         error_lineno = t.lexer.lineno
         error = t.value.strip()
         error_line = self.get_error_line(t)

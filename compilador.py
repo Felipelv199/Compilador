@@ -32,12 +32,11 @@ eje_file = open("{}.eje".format(file_name), "w")
 
 s = file.read()
 lex = lexico(s, lex_file, error_file)
-lexer = lex.start_lexico()
 
 symbol_table = Symbol_Table(error_file)
 ejecutable = Ejecutable(eje_file)
 sintactic = sintactico(s, error_file, symbol_table, ejecutable)
-sintactic.start_sintactic(lexer)
+sintactic.start_sintactic(lex)
 
 file.close()
 lex_file.close()

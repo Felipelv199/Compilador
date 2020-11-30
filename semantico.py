@@ -21,8 +21,10 @@ class Symbol_Table:
         self.file_error = f_error
         self.i_number = 0
         self.e_number = 0
+        self.error_n = 0
 
     def write_semantic_error(self, n, e, d):
+        self.error_n += 1
         self.file_error.write('{:<10}|{:<30}|{:<40}|{}\n'.format(
             str(n), e, d, ''))
 
@@ -124,6 +126,8 @@ class Symbol_Table:
             code = 14
         self.instructions.append('{} {} {}'.format(
             str(self.i_number), 'OPR', '0,{}'.format(code)))
+        self.stack.append('{} {} {}'.format(
+            str(self.i_number), 'OPR', '0,{}'.format(code)))
 
     def add_math_instructions(self, val):
         self.i_number += 1
@@ -137,6 +141,8 @@ class Symbol_Table:
         elif val == '/':
             code = 5
         self.instructions.append('{} {} {}'.format(
+            str(self.i_number), 'OPR', '0,{}'.format(code)))
+        self.stack.append('{} {} {}'.format(
             str(self.i_number), 'OPR', '0,{}'.format(code)))
 
     def get_cte_type(self, value):
