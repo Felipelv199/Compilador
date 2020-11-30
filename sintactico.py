@@ -35,12 +35,12 @@ class sintactico:
 
     def start_sintactic(self, lexer):
         def p_Prgrm(p):
-            '''
+            ''' 
             Prgrm : constantes variables FuncProc PROGRAMA Block FIN DE PROGRAMA DOT
             '''
             self.s_table.add_instruction('OPR', '0,0')
             self.s_table.add_tag(
-                '_P', self.s_table.i_number + 1 - self.li_number)
+                '_P', self.s_table.i_number - self.li_number)
             p[0] = self.join_result(p)
 
         def p_FuncProc(p):
@@ -181,6 +181,7 @@ class sintactico:
                  | LEE LPARENTHESIS ID Udim RPARENTHESIS
             '''
             self.s_table.add_instruction('OPR', '{},19'.format(p[3]))
+            self.li_number = self.s_table.i_number
 
         def p_Imprimenl(p):
             '''
@@ -335,7 +336,7 @@ class sintactico:
                    | ID empty OpAsig Exprlog
             '''
             self.s_table.add_instruction('STO', '0,{}'.format(p[1]))
-            p[0] = self.join_result(p)
+            self.li_number = self.s_table.i_number
 
         def p_Asigna_Error1(p):
             '''
@@ -348,7 +349,17 @@ class sintactico:
         def p_Si(p):
             '''
             Si : SI LPARENTHESIS Exprlog RPARENTHESIS HACER BckEsp
-               | SI LPARENTHESIS Exprlog RPARENTHESIS HACER BckEsp SINO BckEsp
+            '''
+            self.s_table.e_number += 1
+            self.s_table.add_instruction(
+                'JMC', 'V,_E{}'.format(self.s_table.e_number))
+            self.s_table.add_e_tag()
+            self.li_number = self.s_table.i_number
+            p[0] = self.join_result(p)
+
+        def p_Si_sino(p):
+            '''
+            Si : SI LPARENTHESIS Exprlog RPARENTHESIS HACER BckEsp SINO BckEsp
             '''
             p[0] = self.join_result(p)
 
@@ -387,6 +398,7 @@ class sintactico:
             Exprlog : Opy O Exprlog
             '''
             self.s_table.add_instruction('OPR', '0,15')
+            self.li_number = self.s_table.i_number
             p[0] = self.join_result(p)
 
         def p_Opy(p):
@@ -400,6 +412,7 @@ class sintactico:
             Opy : Opno Y Opy
             '''
             self.s_table.add_instruction('OPR', '0,16')
+            self.li_number = self.s_table.i_number
             p[0] = self.join_result(p)
 
         def p_Opno(p):
@@ -413,6 +426,7 @@ class sintactico:
             Opno : NO Oprel
             '''
             self.s_table.add_instruction('OPR', '0,17')
+            self.li_number = self.s_table.i_number
             p[0] = self.join_result(p)
 
         def p_Oprel(p):
@@ -426,6 +440,7 @@ class sintactico:
             Oprel : Expr OpRel Oprel
             '''
             self.s_table.add_oprel_instruction(p[2])
+            self.li_number = self.s_table.i_number
             p[0] = self.join_result(p)
 
         def p_Expr(p):
@@ -440,6 +455,7 @@ class sintactico:
                  | Multi MINUS Expr
             '''
             self.s_table.add_math_instructions(p[2])
+            self.li_number = self.s_table.i_number
             p[0] = self.join_result(p)
 
         def p_Multi(p):
@@ -455,6 +471,7 @@ class sintactico:
                   | Expo PERCENTAGE Multi
             '''
             self.s_table.add_math_instructions(p[2])
+            self.li_number = self.s_table.i_number
             p[0] = self.join_result(p)
 
         def p_Expo(p):
@@ -468,6 +485,7 @@ class sintactico:
             Expo : Signo POW Expo
             '''
             self.s_table.add_instruction('OPR', '0,7')
+            self.li_number = self.s_table.i_number
             p[0] = self.join_result(p)
 
         def p_Signo(p):
@@ -481,6 +499,7 @@ class sintactico:
             Signo : MINUS Termino
             '''
             self.s_table.add_instruction('OPR', '0,3')
+            self.li_number = self.s_table.i_number
             p[0] = self.join_result(p)
 
         def p_Termino(p):
@@ -497,6 +516,7 @@ class sintactico:
                     | ID Udim
             '''
             self.s_table.add_instruction('LOD', '{},0'.format(p[1]))
+            self.li_number = self.s_table.i_number
             p[0] = self.join_result(p)
 
         def p_Termino_const(p):
@@ -507,6 +527,7 @@ class sintactico:
                     | CteLog
             '''
             self.s_table.add_instruction('LIT', '{},0'.format(p[1]))
+            self.li_number = self.s_table.i_number
             p[0] = self.join_result(p)
 
         def p_Lfunc(p):

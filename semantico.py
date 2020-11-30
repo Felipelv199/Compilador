@@ -16,6 +16,7 @@ class Symbol_Table:
         self.tags = []
         self.file_error = f_error
         self.i_number = 0
+        self.e_number = 0
 
     def write_semantic_error(self, n, e, d):
         self.file_error.write('{:<10}|{:<30}|{:<40}|{}\n'.format(
@@ -79,6 +80,10 @@ class Symbol_Table:
         self.tags.append('{},{},{},{},{},#,'.format(
             name, 'I', 'I', number, '0'))
 
+    def add_e_tag(self):
+        self.tags.append('{},{},{},{},{},#,'.format(
+            '_E{}'.format(self.e_number), 'I', 'I', self.i_number, '0'))
+
     def add_oprel_instruction(self, val):
         self.i_number += 1
         code = 0
@@ -94,8 +99,9 @@ class Symbol_Table:
             code = 13
         elif val == '=':
             code = 14
+        print(val, code)
         self.instructions.append('{} {} {}'.format(
-            str(self.i_number), 'OPR', '{},0'.format(code)))
+            str(self.i_number), 'OPR', '0,{}'.format(code)))
 
     def add_math_instructions(self, val):
         self.i_number += 1
@@ -110,4 +116,4 @@ class Symbol_Table:
             code = 5
         print(val, code)
         self.instructions.append('{} {} {}'.format(
-            str(self.i_number), 'OPR', '{},0'.format(code)))
+            str(self.i_number), 'OPR', '0,{}'.format(code)))

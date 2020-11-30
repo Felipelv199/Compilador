@@ -1,3 +1,5 @@
 Programa
-imprimenl();
+Imprimenl("Dame tu nombre");
+si (falso) hacer
+    Imprimenl("Me la pelas");
 Fin de Programa.
