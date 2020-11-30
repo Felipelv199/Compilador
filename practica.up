@@ -6,10 +6,15 @@ variables i, j, k, n:Entero;
 
 Programa
    limpiar;
-   k := 3 - 4 / 2;
-   Imprime("Dame tu nombre: ");
+   k := 3;
+   Imprimenl("Dame tu nombre: ");
+   Imprime(k);
    i := k * 81;
-   Imprime("Dame tu Apellido: ");
+   Imprimenl();
+   Imprimenl("Dame tu Apellido: ");
+   Imprimenl();
    Imprimenl(i);
-   Imprimenl(k);
+   Imprimenl();
+   lee(Beta);
+   Imprimenl(Beta+k);
 Fin de programa.

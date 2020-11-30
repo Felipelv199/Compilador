@@ -1,6 +1,7 @@
 import re
 import ply.yacc as yacc
 from lexico import tokens
+from ejecutable import Ejecutable
 
 
 class sintactico:
@@ -9,6 +10,7 @@ class sintactico:
         self.file_error = f_error
         self.s_table = s_t
         self.eje = eje
+        self.li_number = 0
 
     def write_sintactic_error(self, p, t, description):
         error_line_n = p.lexer.lineno
@@ -36,8 +38,9 @@ class sintactico:
             '''
             Prgrm : constantes variables FuncProc PROGRAMA Block FIN DE PROGRAMA DOT
             '''
-            self.eje.number += 1
-            self.eje.write_in_document('OPR', '0,0')
+            self.s_table.add_instruction('OPR', '0,0')
+            self.s_table.add_tag(
+                '_P', self.s_table.i_number + 1 - self.li_number)
             p[0] = self.join_result(p)
 
         def p_FuncProc(p):
@@ -125,8 +128,7 @@ class sintactico:
 
         def p_Estatuto(p):
             '''
-            Estatuto : LIMPIAR
-                     | INTERRUMPE
+            Estatuto : INTERRUMPE
                      | CONTINUA
                      | Si
                      | Desde
@@ -140,6 +142,14 @@ class sintactico:
                      | Imprimenl
                      | Leer
             '''
+            p[0] = self.join_result(p)
+
+        def p_Estatuto_limpiar(p):
+            '''
+            Estatuto : LIMPIAR
+            '''
+            self.s_table.add_instruction('OPR', '0,18')
+            print(p[1])
             p[0] = self.join_result(p)
 
         def p_Lproc(p):
@@ -170,15 +180,15 @@ class sintactico:
             Leer : LEE LPARENTHESIS ID RPARENTHESIS
                  | LEE LPARENTHESIS ID Udim RPARENTHESIS
             '''
-            p[0] = self.join_result(p)
+            self.s_table.add_instruction('OPR', '{},19'.format(p[3]))
 
         def p_Imprimenl(p):
             '''
             Imprimenl : IMPRIMENL LPARENTHESIS GpoExp RPARENTHESIS
                       | IMPRIMENL LPARENTHESIS empty RPARENTHESIS
             '''
-            self.eje.number += 1
-            self.eje.write_in_document('OPR', '0,21')
+            self.s_table.add_instruction('OPR', '0,21')
+            self.li_number = self.s_table.i_number
             p[0] = self.join_result(p)
 
         def p_Imprimenl_error1(p):
@@ -202,8 +212,8 @@ class sintactico:
             Imprime : IMPRIME LPARENTHESIS GpoExp RPARENTHESIS
                     | IMPRIME LPARENTHESIS empty RPARENTHESIS
             '''
-            self.eje.number += 1
-            self.eje.write_in_document('OPR', '0,20')
+            self.s_table.add_instruction('OPR', '0,20')
+            self.li_number = self.s_table.i_number
             p[0] = self.join_result(p)
 
         def p_Imprime_error1(p):
@@ -324,7 +334,7 @@ class sintactico:
             Asigna : ID Dimens OpAsig Exprlog
                    | ID empty OpAsig Exprlog
             '''
-            self.s_table.change_variable_value(p[1], p[4])
+            self.s_table.add_instruction('STO', '0,{}'.format(p[1]))
             p[0] = self.join_result(p)
 
         def p_Asigna_Error1(p):
@@ -369,29 +379,53 @@ class sintactico:
         def p_Exprlog(p):
             '''
             Exprlog : Opy
-                    | Opy O Exprlog
             '''
+            p[0] = self.join_result(p)
+
+        def p_Exprlog_o(p):
+            '''
+            Exprlog : Opy O Exprlog
+            '''
+            self.s_table.add_instruction('OPR', '0,15')
             p[0] = self.join_result(p)
 
         def p_Opy(p):
             '''
             Opy : Opno
-                | Opno Y Opy
             '''
+            p[0] = self.join_result(p)
+
+        def p_Opy_y(p):
+            '''
+            Opy : Opno Y Opy
+            '''
+            self.s_table.add_instruction('OPR', '0,16')
             p[0] = self.join_result(p)
 
         def p_Opno(p):
             '''
             Opno : Oprel
-                 | NO Oprel
             '''
+            p[0] = self.join_result(p)
+
+        def p_Opno_no(p):
+            '''
+            Opno : NO Oprel
+            '''
+            self.s_table.add_instruction('OPR', '0,17')
             p[0] = self.join_result(p)
 
         def p_Oprel(p):
             '''
             Oprel : Expr
-                  | Expr OpRel Oprel
             '''
+            p[0] = self.join_result(p)
+
+        def p_Oprel_opRel(p):
+            '''
+            Oprel : Expr OpRel Oprel
+            '''
+            self.s_table.add_oprel_instruction(p[2])
             p[0] = self.join_result(p)
 
         def p_Expr(p):
@@ -405,7 +439,8 @@ class sintactico:
             Expr : Multi PLUS Expr
                  | Multi MINUS Expr
             '''
-            p[0] = self.s_table.math_operation(p[1], p[2], p[3])
+            self.s_table.add_math_instructions(p[2])
+            p[0] = self.join_result(p)
 
         def p_Multi(p):
             '''
@@ -419,33 +454,59 @@ class sintactico:
                   | Expo DIVIDE Multi
                   | Expo PERCENTAGE Multi
             '''
-            p[0] = self.s_table.math_operation(p[1], p[2], p[3])
+            self.s_table.add_math_instructions(p[2])
+            p[0] = self.join_result(p)
 
         def p_Expo(p):
             '''
             Expo : Signo
-                 | Signo POW Expo
             '''
+            p[0] = self.join_result(p)
+
+        def p_Expo_pow(p):
+            '''
+            Expo : Signo POW Expo
+            '''
+            self.s_table.add_instruction('OPR', '0,7')
             p[0] = self.join_result(p)
 
         def p_Signo(p):
             '''
-            Signo : MINUS Termino
-                  | Termino
+            Signo : Termino
             '''
+            p[0] = self.join_result(p)
+
+        def p_Signo_minus(p):
+            '''
+            Signo : MINUS Termino
+            '''
+            self.s_table.add_instruction('OPR', '0,3')
             p[0] = self.join_result(p)
 
         def p_Termino(p):
             '''
+            Termino : Lfunc
+                    | Dimens
+            '''
+            print(p[1])
+            p[0] = self.join_result(p)
+
+        def p_Termino_ID(p):
+            '''
             Termino : ID
-                    | Lfunc
                     | ID Udim
-                    | CteEnt
+            '''
+            self.s_table.add_instruction('LOD', '{},0'.format(p[1]))
+            p[0] = self.join_result(p)
+
+        def p_Termino_const(p):
+            '''
+            Termino : CteEnt
                     | CteReal
                     | CteAlfa
                     | CteLog
-                    | Dimens
             '''
+            self.s_table.add_instruction('LIT', '{},0'.format(p[1]))
             p[0] = self.join_result(p)
 
         def p_Lfunc(p):
@@ -579,14 +640,29 @@ class sintactico:
             self.write_sintactic_error(
                 p, '<,>', 'Falto coma despues de la constante')
 
-        def p_Cte(p):
+        def p_Cte_ent(p):
             '''
             Cte : CteEnt
-                | CteReal
-                | CteAlfa
-                | CteLog
             '''
-            p[0] = self.join_result(p)
+            p[0] = self.join_result(p) + ',entero'
+
+        def p_Cte_real(p):
+            '''
+            Cte : CteReal
+            '''
+            p[0] = self.join_result(p) + ',real'
+
+        def p_Cte_alf(p):
+            '''
+            Cte : CteAlfa
+            '''
+            p[0] = self.join_result(p) + ',alfa'
+
+        def p_Cte_log(p):
+            '''
+            Cte : CteLog
+            '''
+            p[0] = self.join_result(p) + ',logico'
 
         def p_variables(p):
             '''
@@ -667,5 +743,6 @@ class sintactico:
 
         parser = yacc.yacc()
         s = self.input
-        result = parser.parse(s, lexer=lexer)
-        print(self.s_table.table)
+        parser.parse(s, lexer=lexer)
+        self.eje.write_in_document_tags(self.s_table.tags)
+        self.eje.write_in_document_instructions(self.s_table.instructions)
