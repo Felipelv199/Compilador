@@ -1,0 +1,16 @@
+constantes PI:=3.1416;
+variables A:=5.15,P,R:Real;
+
+Programa
+PI:=3.1416;
+Imprimenl("Ingresa el radio del circulo");
+Lee(R);
+limpiar;
+A := PI * R * R;
+Imprimenl("-----------------------Circulo-----------------------");
+Imprime("Area: ");
+Imprimenl(A);
+P := PI * R;
+Imprime("Perimetro: ");
+Imprimenl(P);
+Fin de Programa.

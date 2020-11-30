@@ -130,7 +130,6 @@ class sintactico:
             '''
             Estatuto : INTERRUMPE
                      | CONTINUA
-                     | Si
                      | Desde
                      | Repetir
                      | Mientras
@@ -144,12 +143,17 @@ class sintactico:
             '''
             p[0] = self.join_result(p)
 
+        def p_Estatuto_Si(p):
+            '''
+            Estatuto : Si
+            '''
+            print(p[1], self.s_table.instructions)
+
         def p_Estatuto_limpiar(p):
             '''
             Estatuto : LIMPIAR
             '''
             self.s_table.add_instruction('OPR', '0,18')
-            print(p[1])
             p[0] = self.join_result(p)
 
         def p_Lproc(p):
@@ -352,8 +356,12 @@ class sintactico:
             '''
             self.s_table.e_number += 1
             self.s_table.add_instruction(
-                'JMC', 'V,_E{}'.format(self.s_table.e_number))
-            self.s_table.add_e_tag()
+                'JMC', 'F,_E{}'.format(self.s_table.e_number))
+            self.s_table.add_e_tag(self.s_table.i_number)
+            self.s_table.e_number += 1
+            self.s_table.add_instruction(
+                'JMP', 'F,_E{}'.format(self.s_table.e_number))
+            self.s_table.add_e_tag(self.s_table.i_number+1)
             self.li_number = self.s_table.i_number
             p[0] = self.join_result(p)
 
@@ -498,6 +506,19 @@ class sintactico:
             '''
             Signo : MINUS Termino
             '''
+            type = ''
+            if p[2] in self.s_table.table:
+                value = self.s_table.table[p[2]].valor
+                if value == '':
+                    return
+                type = self.s_table.get_cte_type(value)
+            else:
+                type = self.s_table.get_cte_type(p[2])
+
+            if type != 'real' and type != 'entero':
+                self.s_table.write_semantic_error(
+                    p.lexer.lineno-1, self.join_result(p), '<semantico> Esta operacion no puede ser realizada por este tipo de dato')
+                return
             self.s_table.add_instruction('OPR', '0,3')
             self.li_number = self.s_table.i_number
             p[0] = self.join_result(p)
@@ -507,7 +528,6 @@ class sintactico:
             Termino : Lfunc
                     | Dimens
             '''
-            print(p[1])
             p[0] = self.join_result(p)
 
         def p_Termino_ID(p):
@@ -515,8 +535,14 @@ class sintactico:
             Termino : ID
                     | ID Udim
             '''
-            self.s_table.add_instruction('LOD', '{},0'.format(p[1]))
+            if p[1] not in self.s_table.table:
+                self.s_table.write_semantic_error(
+                    p.lexer.lineno-1, p[1], '<semantico> La variable o constante no a sido declarada')
+                return
+            id = p[1]
+            self.s_table.add_instruction('LOD', '{},0'.format(id))
             self.li_number = self.s_table.i_number
+            self.s_table.stack.append(self.s_table.table[p[1]].type)
             p[0] = self.join_result(p)
 
         def p_Termino_const(p):
@@ -767,3 +793,4 @@ class sintactico:
         parser.parse(s, lexer=lexer)
         self.eje.write_in_document_tags(self.s_table.tags)
         self.eje.write_in_document_instructions(self.s_table.instructions)
+        print(self.s_table.table)

@@ -1,0 +1,12 @@
+variables cuenta:Entero;
+          iva, ctIva:Real;
+
+Programa
+    Imprimenl("----------------Propina-------------------");
+    Imprimenl("Ingrese el costo total de su cuenta: ");
+    Lee(cuenta);
+    iva:=cuenta*0.16;
+    ctIva:=cuenta*1.16;
+    Imprimenl(iva);
+    Imprimenl(ctIva);
+Fin de Programa.
