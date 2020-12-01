@@ -1,18 +1,27 @@
 constantes PI:=3.1416;
 variables A:=5.15,P,R:Real;
+          op:Entero;
 
 Programa
 PI:=3.1416;
 Imprimenl("Ingresa el radio del circulo");
 Lee(R);
 limpiar;
-A := PI * R * R;
 Imprimenl("-----------------------Circulo-----------------------");
-Imprime("Area: ");
-Imprimenl(A);
-P := PI * R;
-si (P<10) hacer
-    Imprimenl("Es un circulo muy pequeño");
-Imprime("Perimetro: ");
-Imprimenl(P);
+Imprimenl("Selecciona que opcion deseas conocer: ");
+Imprimenl("1)   Area");
+Imprimenl("2)   Perimetro");
+Lee(op);
+si(op=1) hacer
+    Inicio
+    A := PI * R * R;
+    Imprime("Area: ");
+    Imprimenl(A);
+    Fin;
+si(op=2) hacer
+    Inicio
+    P := PI * R * 2;
+    Imprime("Perimetro: ");
+    Imprimenl(P);
+    Fin;
 Fin de Programa.

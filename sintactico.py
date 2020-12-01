@@ -363,8 +363,8 @@ class sintactico:
             Si : SI LPARENTHESIS Exprlog RPARENTHESIS HACER BckEsp
             '''
             self.s_table.e_number += 1
-            index = self.s_table.stack[-1][1]
-            self.s_table.add_instruction_if(index)
+            index = self.s_table.stack.pop(-1)[1]
+            self.s_table.add_instruction_if(int(index))
             self.s_table.add_e_tag(self.s_table.i_number+1)
             self.li_number = self.s_table.i_number
             p[0] = self.join_result(p)

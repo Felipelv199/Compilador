@@ -1,4 +1,5 @@
 variables a,b,r:Real;
+          op:Entero;
 
 Programa
 Imprimenl("------------------Calculadora----------------------");
@@ -7,32 +8,51 @@ Lee(a);
 Imprimenl("Ingrese b:");
 Lee(b);
 Limpiar;
-r := a+b;
-Imprimenl("Suma: ");
-Imprime(a);
-Imprime(" + ");
-Imprime(b);
-Imprime(" = ");
-Imprimenl(r);
-r := 5-b;
-Imprimenl("Resta: ");
-Imprime(a);
-Imprime(" - ");
-Imprime(b);
-Imprime(" = ");
-Imprimenl(r);
-r := a*b;
-Imprimenl("Multiplicacion: ");
-Imprime(a);
-Imprime(" * ");
-Imprime(b);
-Imprime(" = ");
-Imprimenl(r);
-r := a/b;
-Imprimenl("Division: ");
-Imprime(a);
-Imprime(" / ");
-Imprime(b);
-Imprime(" = ");
-Imprimenl(r);
+Imprimenl("Que operacion desea realizar");
+Imprimenl("1)   +");
+Imprimenl("2)   -");
+Imprimenl("3)   *");
+Imprimenl("4)   /");
+Lee(op);
+Limpiar;
+si(op=1) hacer
+    Inicio
+    r:=a+b;
+    Imprimenl("------------------Suma----------------------");
+    Imprime(a);
+    Imprime(" + ");
+    Imprime(b);
+    Imprime(" = ");
+    Imprimenl(r);
+    Fin;
+si(op=2) hacer
+    Inicio
+    r:=a-b;
+    Imprimenl("------------------Resta----------------------");
+    Imprime(a);
+    Imprime(" - ");
+    Imprime(b);
+    Imprime(" = ");
+    Imprimenl(r);
+    Fin;
+si(op=3) hacer
+    Inicio
+    r:=a*b;
+    Imprimenl("------------------Multiplicacion----------------------");
+    Imprime(a);
+    Imprime(" * ");
+    Imprime(b);
+    Imprime(" = ");
+    Imprimenl(r);
+    Fin;
+si(op=4) hacer
+    Inicio
+    r:=a/b;
+    Imprimenl("------------------Division----------------------");
+    Imprime(a);
+    Imprime(" / ");
+    Imprime(b);
+    Imprime(" = ");
+    Imprimenl(r);
+    Fin;
 Fin de Programa.

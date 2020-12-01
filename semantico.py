@@ -158,8 +158,6 @@ class Symbol_Table:
             code = 5
         self.instructions.append('{} {} {}'.format(
             str(self.i_number), 'OPR', '0,{}'.format(code)))
-        self.stack.append('{} {} {}'.format(
-            str(self.i_number), 'OPR', '0,{}'.format(code)))
 
     def get_cte_type(self, value):
         curr = None
