@@ -7,6 +7,9 @@ Lee(username);
 Imprimenl("Dame tu contraseña: ");
 Lee(password);
 limpiar;
-Imprimenl("---------------------Bienvenido---------------------");
-Imprimenl(username);
+si(password="Felipelv199") hacer
+    Inicio
+    Imprimenl("---------------------Bienvenido---------------------");
+    Imprimenl(username);
+    Fin;
 Fin de Programa.
