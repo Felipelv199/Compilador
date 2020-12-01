@@ -1,4 +1,5 @@
 import re
+from types import new_class
 import ply.yacc as yacc
 from lexico import tokens
 from ejecutable import Ejecutable
@@ -142,7 +143,12 @@ class sintactico:
                      | Imprime
                      | Imprimenl
                      | Leer
-                     | Si
+            '''
+            p[0] = self.join_result(p)
+
+        def p_Estatuto_si(p):
+            '''
+            Estatuto : Si
             '''
             p[0] = self.join_result(p)
 
@@ -357,12 +363,8 @@ class sintactico:
             Si : SI LPARENTHESIS Exprlog RPARENTHESIS HACER BckEsp
             '''
             self.s_table.e_number += 1
-            self.s_table.add_instruction(
-                'JMC', 'F,_E{}'.format(self.s_table.e_number))
-            self.s_table.add_e_tag(self.s_table.i_number)
-            self.s_table.e_number += 1
-            self.s_table.add_instruction(
-                'JMP', 'F,_E{}'.format(self.s_table.e_number))
+            index = self.s_table.stack[-1][1]
+            self.s_table.add_instruction_if(index)
             self.s_table.add_e_tag(self.s_table.i_number+1)
             self.li_number = self.s_table.i_number
             p[0] = self.join_result(p)
@@ -393,7 +395,12 @@ class sintactico:
             '''
             BckEsp : Estatuto
                    | INICIO Block FIN
-                   |
+            '''
+            p[0] = self.join_result(p)
+
+        def p_BckEsp_empty(p):
+            '''
+            BckEsp : 
             '''
             p[0] = self.join_result(p)
 
@@ -524,7 +531,6 @@ class sintactico:
             id = p[1]
             self.s_table.add_instruction('LOD', '{},0'.format(id))
             self.li_number = self.s_table.i_number
-            self.s_table.stack.append(self.s_table.table[p[1]].type)
             p[0] = self.join_result(p)
 
         def p_Termino_const(p):

@@ -87,6 +87,22 @@ class Symbol_Table:
         self.instructions.append('{} {} {}'.format(
             str(self.i_number), operator, code))
 
+    def add_instruction_if(self, index):
+        instrucs = self.instructions[index:]
+        old_intrucs = self.instructions[:index]
+        index += 1
+        new_intrucs = []
+        new_intrucs.append('{} {} {}'.format(
+            index, 'JMC', 'F,_E{}'.format(self.e_number)))
+        for instruc in instrucs:
+            index += 1
+            curr = instruc.split(' ')
+            new_intruc = '{} {} {}'.format(
+                index, curr[1], ' '.join(curr[2:]))
+            new_intrucs.append(new_intruc)
+        self.instructions = old_intrucs + new_intrucs
+        self.i_number += 1
+
     def add_global_variable_tag(self, name, var_const, type, dim1, dim2):
         new_type = ''
         if type.lower() == 'entero':
@@ -126,8 +142,8 @@ class Symbol_Table:
             code = 14
         self.instructions.append('{} {} {}'.format(
             str(self.i_number), 'OPR', '0,{}'.format(code)))
-        self.stack.append('{} {} {}'.format(
-            str(self.i_number), 'OPR', '0,{}'.format(code)))
+        self.stack.append(('{} {} {}'.format(
+            str(self.i_number), 'OPR', '0,{}'.format(code)), len(self.instructions)))
 
     def add_math_instructions(self, val):
         self.i_number += 1

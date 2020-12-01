@@ -11,6 +11,8 @@ Imprimenl("-----------------------Circulo-----------------------");
 Imprime("Area: ");
 Imprimenl(A);
 P := PI * R;
+si (P<10) hacer
+    Imprimenl("Es un circulo muy pequeño");
 Imprime("Perimetro: ");
 Imprimenl(P);
 Fin de Programa.
